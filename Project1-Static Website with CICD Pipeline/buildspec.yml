@@ -1,0 +1,20 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+  pre_build:
+    commands:
+      - echo Build started on `date`
+  build:
+    commands:
+      - echo Build phase - copying files
+      # Add any build commands here if you have a build process
+      # For example: npm install && npm run build
+  post_build:
+    commands:
+      - echo Build completed on `date`
+artifacts:
+  files:
+    - '**/*'
+  name: project1-portfolio-website-artifacts

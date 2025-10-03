@@ -1,0 +1,45 @@
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Effect": "Allow",
+			"Action": [
+				"s3:GetBucketVersioning",
+				"s3:GetObject",
+				"s3:GetObjectVersion",
+				"s3:PutObject",
+				"s3:DeleteObject",
+				"s3:ListBucket"
+			],
+			"Resource": [
+				"arn:aws:s3:::project1-aws-portfolio-website",
+				"arn:aws:s3:::project1-aws-portfolio-website/*",
+				"arn:aws:s3:::codepipeline-us-east-1-*"
+			]
+		},
+		{
+			"Effect": "Allow",
+			"Action": [
+				"codeconnections:UseConnection",
+				"codeconnections:GetConnection",
+				"codestar-connections:UseConnection",
+				"codestar-connections:GetConnection"
+			],
+			"Resource": [
+				"arn:aws:codeconnections:us-east-1:206055866143:connection/d45baf2f-86c9-40bc-abb2-3f4c7d478288",
+				"arn:aws:codestar-connections:us-east-1:206055866143:connection/d45baf2f-86c9-40bc-abb2-3f4c7d478288",
+				"arn:aws:codeconnections:us-east-1:*:connection/*",
+				"arn:aws:codestar-connections:us-east-1:*:connection/*"
+			]
+		},
+		{
+			"Effect": "Allow",
+			"Action": [
+				"lambda:InvokeFunction"
+			],
+			"Resource": [
+				"arn:aws:lambda:us-east-1:206055866143:function:project1-cloudfront-invalidation"
+			]
+		}
+	]
+}

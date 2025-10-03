@@ -1,0 +1,293 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Serverless Contact Form Infrastructure'
+
+Parameters:
+  ProjectName:
+    Type: String
+    Default: 'serverless-contact-form'
+    Description: 'Name of the project'
+  
+  AdminEmail:
+    Type: String
+    Description: 'Email address for admin notifications'
+    AllowedPattern: '^[^\s@]+@[^\s@]+\.[^\s@]+$'
+  
+  SenderEmail:
+    Type: String
+    Description: 'Verified SES email address for sending notifications'
+    AllowedPattern: '^[^\s@]+@[^\s@]+\.[^\s@]+$'
+
+Resources:
+  # DynamoDB Table
+  ContactSubmissionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${ProjectName}-submissions'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: Project
+          Value: !Ref ProjectName
+
+  # IAM Role for Lambda
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub '${ProjectName}-lambda-role'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: DynamoDBAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:PutItem
+                  - dynamodb:GetItem
+                  - dynamodb:UpdateItem
+                  - dynamodb:DeleteItem
+                  - dynamodb:Scan
+                Resource: !GetAtt ContactSubmissionsTable.Arn
+        - PolicyName: SESAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ses:SendEmail
+                  - ses:SendRawEmail
+                Resource: '*'
+
+  # Lambda Function for Processing Contact Form
+  ProcessContactFormFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub '${ProjectName}-process-contact'
+      Runtime: python3.9
+      Handler: index.lambda_handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Timeout: 30
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref ContactSubmissionsTable
+          SENDER_EMAIL: !Ref SenderEmail
+          ADMIN_EMAIL: !Ref AdminEmail
+      Code:
+        ZipFile: |
+          import json
+          import boto3
+          import uuid
+          import os
+          from datetime import datetime
+
+          dynamodb = boto3.resource('dynamodb')
+          ses = boto3.client('ses')
+          table = dynamodb.Table(os.environ['TABLE_NAME'])
+
+          def lambda_handler(event, context):
+              try:
+                  if 'body' in event:
+                      body = json.loads(event['body'])
+                  else:
+                      body = event
+                  
+                  name = body.get('name', '')
+                  email = body.get('email', '')
+                  subject = body.get('subject', 'No Subject')
+                  message = body.get('message', '')
+                  
+                  if not all([name, email, message]):
+                      return {
+                          'statusCode': 400,
+                          'headers': {
+                              'Access-Control-Allow-Origin': '*',
+                              'Access-Control-Allow-Headers': 'Content-Type',
+                              'Access-Control-Allow-Methods': 'POST, OPTIONS'
+                          },
+                          'body': json.dumps({
+                              'error': 'Missing required fields'
+                          })
+                      }
+                  
+                  submission_id = str(uuid.uuid4())
+                  timestamp = datetime.utcnow().isoformat()
+                  
+                  table.put_item(
+                      Item={
+                          'id': submission_id,
+                          'name': name,
+                          'email': email,
+                          'subject': subject,
+                          'message': message,
+                          'timestamp': timestamp,
+                          'status': 'new'
+                      }
+                  )
+                  
+                  return {
+                      'statusCode': 200,
+                      'headers': {
+                          'Access-Control-Allow-Origin': '*',
+                          'Access-Control-Allow-Headers': 'Content-Type',
+                          'Access-Control-Allow-Methods': 'POST, OPTIONS'
+                      },
+                      'body': json.dumps({
+                          'message': 'Contact form submitted successfully!',
+                          'id': submission_id
+                      })
+                  }
+                  
+              except Exception as e:
+                  print(f"Error: {str(e)}")
+                  return {
+                      'statusCode': 500,
+                      'headers': {
+                          'Access-Control-Allow-Origin': '*'
+                      },
+                      'body': json.dumps({
+                          'error': 'Internal server error'
+                      })
+                  }
+
+  # API Gateway
+  ContactFormApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: !Sub '${ProjectName}-api'
+      Description: 'API for serverless contact form'
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+
+  # API Gateway Resource
+  ContactResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref ContactFormApi
+      ParentId: !GetAtt ContactFormApi.RootResourceId
+      PathPart: contact
+
+  # API Gateway Method
+  ContactPostMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ContactFormApi
+      ResourceId: !Ref ContactResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ProcessContactFormFunction.Arn}/invocations'
+      MethodResponses:
+        - StatusCode: 200
+          ResponseHeaders:
+            Access-Control-Allow-Origin: true
+
+  # CORS Options Method
+  ContactOptionsMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ContactFormApi
+      ResourceId: !Ref ContactResource
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      Integration:
+        Type: MOCK
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'POST,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: ''
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+      MethodResponses:
+        - StatusCode: 200
+          ResponseHeaders:
+            Access-Control-Allow-Headers: true
+            Access-Control-Allow-Methods: true
+            Access-Control-Allow-Origin: true
+
+  # API Gateway Deployment
+  ApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn:
+      - ContactPostMethod
+      - ContactOptionsMethod
+    Properties:
+      RestApiId: !Ref ContactFormApi
+      StageName: prod
+
+  # Lambda Permission for API Gateway
+  LambdaApiGatewayPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref ProcessContactFormFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:aws:apigateway:${AWS::Region}::/restapis/${ContactFormApi}/stages/prod/POST/contact'
+
+  # S3 Bucket for hosting
+  WebsiteBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub '${ProjectName}-website-${AWS::AccountId}'
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: error.html
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+
+  # S3 Bucket Policy
+  WebsiteBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref WebsiteBucket
+      PolicyDocument:
+        Statement:
+          - Sid: PublicReadGetObject
+            Effect: Allow
+            Principal: '*'
+            Action: s3:GetObject
+            Resource: !Sub '${WebsiteBucket.Arn}/*'
+
+Outputs:
+  ApiEndpoint:
+    Description: 'API Gateway endpoint URL'
+    Value: !Sub 'https://${ContactFormApi}.execute-api.${AWS::Region}.amazonaws.com/prod/contact'
+    Export:
+      Name: !Sub '${ProjectName}-api-endpoint'
+
+  WebsiteURL:
+    Description: 'Website URL'
+    Value: !Sub 'http://${WebsiteBucket}.s3-website-${AWS::Region}.amazonaws.com'
+    Export:
+      Name: !Sub '${ProjectName}-website-url'
+
+  DynamoDBTable:
+    Description: 'DynamoDB table name'
+    Value: !Ref ContactSubmissionsTable
+    Export:
+      Name: !Sub '${ProjectName}-table-name'

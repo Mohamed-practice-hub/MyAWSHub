@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Form - Serverless Project</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+            font-size: 14px;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        input.error,
+        textarea.error {
+            border-color: #e74c3c;
+        }
+        input.valid,
+        textarea.valid {
+            border-color: #27ae60;
+        }
+        textarea {
+            height: 120px;
+            resize: vertical;
+        }
+        .error-message {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+        .char-count {
+            font-size: 12px;
+            color: #666;
+            text-align: right;
+            margin-top: 5px;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            transition: transform 0.2s ease;
+        }
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .message {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .required {
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Contact Us</h1>
+        <form id="contactForm" novalidate>
+            <div class="form-group">
+                <label for="name">Full Name <span class="required">*</span></label>
+                <input type="text" id="name" name="name" required minlength="2" maxlength="50">
+                <div class="error-message" id="nameError"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email Address <span class="required">*</span></label>
+                <input type="email" id="email" name="email" required>
+                <div class="error-message" id="emailError"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone" pattern="[0-9\-\+\s\(\)]+">
+                <div class="error-message" id="phoneError"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="subject">Subject</label>
+                <input type="text" id="subject" name="subject" maxlength="100">
+                <div class="char-count" id="subjectCount">0/100</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="message">Message <span class="required">*</span></label>
+                <textarea id="message" name="message" required minlength="10" maxlength="1000" placeholder="Please enter your message here..."></textarea>
+                <div class="char-count" id="messageCount">0/1000</div>
+                <div class="error-message" id="messageError"></div>
+            </div>
+            
+            <button type="submit" id="submitBtn">Send Message</button>
+        </form>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Sending your message...</p>
+        </div>
+        
+        <div id="responseMessage"></div>
+    </div>
+
+    <script>
+        // Replace this URL with your actual API Gateway endpoint
+        const API_ENDPOINT = 'https://YOUR_API_ID.execute-api.YOUR_REGION.amazonaws.com/prod/contact';
+        
+        // Validation rules
+        const validationRules = {
+            name: {
+                required: true,
+                minLength: 2,
+                maxLength: 50,
+                pattern: /^[a-zA-Z\s]+$/,
+                message: 'Name must be 2-50 characters and contain only letters and spaces'
+            },
+            email: {
+                required: true,
+                pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: 'Please enter a valid email address'
+            },
+            phone: {
+                required: false,
+                pattern: /^[0-9\-\+\s\(\)]+$/,
+                message: 'Please enter a valid phone number'
+            },
+            message: {
+                required: true,
+                minLength: 10,
+                maxLength: 1000,
+                message: 'Message must be between 10-1000 characters'
+            }
+        };
+        
+        // Real-time validation
+        function validateField(fieldName, value) {
+            const rules = validationRules[fieldName];
+            if (!rules) return true;
+            
+            const field = document.getElementById(fieldName);
+            const errorElement = document.getElementById(fieldName + 'Error');
+            
+            // Check required
+            if (rules.required && !value.trim()) {
+                showError(field, errorElement, `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} is required`);
+                return false;
+            }
+            
+            // Check pattern
+            if (value && rules.pattern && !rules.pattern.test(value)) {
+                showError(field, errorElement, rules.message);
+                return false;
+            }
+            
+            // Check length
+            if (value && rules.minLength && value.length < rules.minLength) {
+                showError(field, errorElement, rules.message);
+                return false;
+            }
+            
+            if (value && rules.maxLength && value.length > rules.maxLength) {
+                showError(field, errorElement, rules.message);
+                return false;
+            }
+            
+            // Valid
+            showValid(field, errorElement);
+            return true;
+        }
+        
+        function showError(field, errorElement, message) {
+            field.classList.remove('valid');
+            field.classList.add('error');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+        
+        function showValid(field, errorElement) {
+            field.classList.remove('error');
+            field.classList.add('valid');
+            errorElement.style.display = 'none';
+        }
+        
+        // Character counters
+        function updateCharCount(fieldId, maxLength) {
+            const field = document.getElementById(fieldId);
+            const counter = document.getElementById(fieldId + 'Count');
+            const currentLength = field.value.length;
+            counter.textContent = `${currentLength}/${maxLength}`;
+            
+            if (currentLength > maxLength * 0.9) {
+                counter.style.color = '#e74c3c';
+            } else {
+                counter.style.color = '#666';
+            }
+        }
+        
+        // Event listeners
+        document.getElementById('name').addEventListener('input', function() {
+            validateField('name', this.value);
+        });
+        
+        document.getElementById('email').addEventListener('input', function() {
+            validateField('email', this.value);
+        });
+        
+        document.getElementById('phone').addEventListener('input', function() {
+            validateField('phone', this.value);
+        });
+        
+        document.getElementById('subject').addEventListener('input', function() {
+            updateCharCount('subject', 100);
+        });
+        
+        document.getElementById('message').addEventListener('input', function() {
+            validateField('message', this.value);
+            updateCharCount('message', 1000);
+        });
+        
+        // Form submission
+        document.getElementById('contactForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const loading = document.getElementById('loading');
+            const responseMessage = document.getElementById('responseMessage');
+            
+            // Validate all fields
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const subject = document.getElementById('subject').value;
+            const message = document.getElementById('message').value;
+            
+            let isValid = true;
+            isValid &= validateField('name', name);
+            isValid &= validateField('email', email);
+            isValid &= validateField('phone', phone);
+            isValid &= validateField('message', message);
+            
+            if (!isValid) {
+                responseMessage.innerHTML = '<div class="message error">Please fix the errors above before submitting.</div>';
+                return;
+            }
+            
+            // Prepare form data
+            const formData = {
+                name: name,
+                email: email,
+                phone: phone,
+                subject: subject || 'No Subject',
+                message: message
+            };
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            loading.style.display = 'block';
+            responseMessage.innerHTML = '';
+            
+            try {
+                const response = await fetch(API_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    responseMessage.innerHTML = `<div class="message success">${result.message}</div>`;
+                    document.getElementById('contactForm').reset();
+                    updateCharCount('subject', 100);
+                    updateCharCount('message', 1000);
+                    // Remove validation classes
+                    document.querySelectorAll('.valid, .error').forEach(el => {
+                        el.classList.remove('valid', 'error');
+                    });
+                } else {
+                    responseMessage.innerHTML = `<div class="message error">Error: ${result.error}</div>`;
+                }
+            } catch (error) {
+                responseMessage.innerHTML = '<div class="message error">Network error. Please try again later.</div>';
+                console.error('Error:', error);
+            } finally {
+                submitBtn.disabled = false;
+                loading.style.display = 'none';
+            }
+        });
+        
+        // Initialize character counters
+        updateCharCount('subject', 100);
+        updateCharCount('message', 1000);
+    </script>
+</body>
+</html>
