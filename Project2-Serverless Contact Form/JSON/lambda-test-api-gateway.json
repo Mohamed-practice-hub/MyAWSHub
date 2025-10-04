@@ -1,0 +1,15 @@
+{
+  "body": "{\"name\":\"John Doe\",\"email\":\"john@example.com\",\"subject\":\"Test Subject\",\"message\":\"This is a test message from API Gateway format\"}",
+  "headers": {
+    "Content-Type": "application/json",
+    "User-Agent": "Mozilla/5.0"
+  },
+  "httpMethod": "POST",
+  "path": "/contact",
+  "queryStringParameters": null,
+  "requestContext": {
+    "httpMethod": "POST",
+    "path": "/prod/contact",
+    "stage": "prod"
+  }
+}

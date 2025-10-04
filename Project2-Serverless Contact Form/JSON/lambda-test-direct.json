@@ -1,0 +1,6 @@
+{
+  "name": "Jane Smith",
+  "email": "jane@example.com",
+  "subject": "Direct Lambda Test",
+  "message": "This is a direct Lambda invocation test without API Gateway"
+}

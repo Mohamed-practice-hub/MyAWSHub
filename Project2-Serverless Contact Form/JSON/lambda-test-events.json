@@ -1,0 +1,23 @@
+{
+  "lambda-success": {
+    "name": "John",
+    "email": "john@test.com",
+    "message": "Lambda direct test"
+  },
+  
+  "lambda-failure": {
+    "name": "John",
+    "email": "",
+    "message": ""
+  },
+  
+  "api-success": {
+    "body": "{\"name\":\"John\",\"email\":\"john@test.com\",\"message\":\"API test message\"}",
+    "httpMethod": "POST"
+  },
+  
+  "api-failure": {
+    "body": "{\"name\":\"John\",\"email\":\"\",\"message\":\"\"}",
+    "httpMethod": "POST"
+  }
+}

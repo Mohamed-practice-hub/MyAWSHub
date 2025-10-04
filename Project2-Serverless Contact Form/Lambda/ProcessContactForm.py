@@ -6,22 +6,39 @@ from datetime import datetime
 
 # Initialize DynamoDB client
 dynamodb = boto3.resource('dynamodb')
-table_name = os.environ.get('TABLE_NAME', 'ContactSubmissions')
+table_name = os.environ.get('TABLE_NAME', 'project2-ContactSubmissions')
 table = dynamodb.Table(table_name)
 
 def lambda_handler(event, context):
+    # Force logging to work
+    import logging
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
+    
     print(f"Received event: {json.dumps(event)}")
+    logger.info(f"Received event: {json.dumps(event)}")
     print(f"Using table: {table_name}")
+    logger.info(f"Using table: {table_name}")
     
     try:
         # Parse the request body
         if 'body' in event:
             print(f"Raw body: {event['body']}")
-            body = json.loads(event['body'])
+            print(f"Raw body type: {type(event['body'])}")
+            logger.info(f"Raw body: {event['body']}")
+            try:
+                body = json.loads(event['body'])
+                print(f"JSON parsing successful")
+            except Exception as parse_error:
+                print(f"JSON parsing failed: {str(parse_error)}")
+                body = {}
         else:
+            print("No 'body' key in event, using event directly")
             body = event
         
         print(f"Parsed body: {json.dumps(body)}")
+        print(f"Parsed body keys: {list(body.keys())}")
+        logger.info(f"Parsed body: {json.dumps(body)}")
         
         # Extract form data
         name = body.get('name', '')
@@ -29,11 +46,38 @@ def lambda_handler(event, context):
         subject = body.get('subject', '')
         message = body.get('message', '')
         
+        print(f"Raw values from body.get():")
+        print(f"  name: {repr(body.get('name', 'KEY_NOT_FOUND'))}")
+        print(f"  email: {repr(body.get('email', 'KEY_NOT_FOUND'))}")
+        print(f"  message: {repr(body.get('message', 'KEY_NOT_FOUND'))}")
+        print(f"  subject: {repr(body.get('subject', 'KEY_NOT_FOUND'))}")
+        
         print(f"Extracted data - Name: {name}, Email: {email}, Subject: {subject}, Message: {message}")
+        logger.info(f"Extracted data - Name: {name}, Email: {email}, Subject: {subject}, Message: {message}")
+        
+        # Debug field values
+        print(f"DEBUG - name: '{name}' (length: {len(name)})")
+        print(f"DEBUG - email: '{email}' (length: {len(email)})")
+        print(f"DEBUG - message: '{message}' (length: {len(message)})")
         
         # Validate required fields
-        if not all([name, email, message]):
-            print("Validation failed - missing required fields")
+        missing_fields = []
+        if not name or name.strip() == '':
+            missing_fields.append('name')
+            print(f"DEBUG - name is missing or empty")
+        if not email or email.strip() == '':
+            missing_fields.append('email')
+            print(f"DEBUG - email is missing or empty")
+        if not message or message.strip() == '':
+            missing_fields.append('message')
+            print(f"DEBUG - message is missing or empty")
+        
+        print(f"DEBUG - missing_fields list: {missing_fields}")
+        
+        if missing_fields:
+            error_msg = f"Missing required fields: {', '.join(missing_fields)}"
+            print(f"Validation failed - {error_msg}")
+            logger.error(f"Validation failed - {error_msg}")
             return {
                 'statusCode': 400,
                 'headers': {
@@ -42,7 +86,7 @@ def lambda_handler(event, context):
                     'Access-Control-Allow-Methods': 'POST, OPTIONS'
                 },
                 'body': json.dumps({
-                    'error': 'Missing required fields: name, email, and message'
+                    'error': error_msg
                 })
             }
         
@@ -51,6 +95,7 @@ def lambda_handler(event, context):
         timestamp = datetime.utcnow().isoformat()
         
         print(f"Generated ID: {submission_id}, Timestamp: {timestamp}")
+        logger.info(f"Generated ID: {submission_id}, Timestamp: {timestamp}")
         
         # Prepare item for DynamoDB
         item = {
@@ -86,6 +131,7 @@ def lambda_handler(event, context):
         
     except Exception as e:
         print(f"Error occurred: {str(e)}")
+        logger.error(f"Error occurred: {str(e)}")
         print(f"Error type: {type(e).__name__}")
         import traceback
         print(f"Traceback: {traceback.format_exc()}")
@@ -103,4 +149,5 @@ def lambda_handler(event, context):
         }
         
         print(f"Returning error response: {json.dumps(error_response)}")
+        logger.error(f"Returning error response: {json.dumps(error_response)}")
         return error_response
