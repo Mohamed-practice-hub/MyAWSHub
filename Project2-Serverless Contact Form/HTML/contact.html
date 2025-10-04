@@ -181,10 +181,12 @@
                 logDebug('Response Body:', result);
                 
                 if (response.ok) {
-                    responseMessage.innerHTML = `<div class="message success">${result.message}</div>`;
+                    const message = result.message || result.body || 'Form submitted successfully!';
+                    responseMessage.innerHTML = `<div class="message success">${message}</div>`;
                     document.getElementById('contactForm').reset();
                 } else {
-                    responseMessage.innerHTML = `<div class="message error">Error: ${result.error}</div>`;
+                    const error = result.error || result.message || 'An error occurred';
+                    responseMessage.innerHTML = `<div class="message error">Error: ${error}</div>`;
                 }
             } catch (error) {
                 logDebug('Fetch Error:', error.message);
