@@ -4,10 +4,15 @@ import uuid
 import os
 from datetime import datetime
 
-# Initialize DynamoDB client
+# Initialize AWS clients
 dynamodb = boto3.resource('dynamodb')
+ses = boto3.client('ses')
 table_name = os.environ.get('TABLE_NAME', 'project2-ContactSubmissions')
 table = dynamodb.Table(table_name)
+
+# Configuration
+SENDER_EMAIL = "mhussain.myindia@gmail.com"
+ADMIN_EMAIL = "mhussain.myindia@gmail.com"
 
 def lambda_handler(event, context):
     # Force logging to work
@@ -109,9 +114,69 @@ def lambda_handler(event, context):
         
         print(f"Inserting item: {json.dumps(item)}")
         
+        # Add status field to item
+        item['status'] = 'new'
+        
         # Store in DynamoDB
         response = table.put_item(Item=item)
         print(f"DynamoDB response: {json.dumps(response)}")
+        
+        # Send email notifications
+        try:
+            # Email to admin
+            admin_subject = f"New Contact Form Submission: {subject or 'No Subject'}"
+            admin_body = f"""
+New contact form submission received:
+
+Name: {name}
+Email: {email}
+Subject: {subject or 'No Subject'}
+Message: {message}
+
+Submission ID: {submission_id}
+Timestamp: {timestamp}
+"""
+            
+            ses.send_email(
+                Source=SENDER_EMAIL,
+                Destination={'ToAddresses': [ADMIN_EMAIL]},
+                Message={
+                    'Subject': {'Data': admin_subject},
+                    'Body': {'Text': {'Data': admin_body}}
+                }
+            )
+            
+            # Confirmation email to user
+            user_subject = "Thank you for contacting us!"
+            user_body = f"""
+Dear {name},
+
+Thank you for reaching out to us. We have received your message and will get back to you soon.
+
+Your message:
+Subject: {subject or 'No Subject'}
+Message: {message}
+
+Reference ID: {submission_id}
+
+Best regards,
+The Team
+"""
+            
+            ses.send_email(
+                Source=SENDER_EMAIL,
+                Destination={'ToAddresses': [email]},
+                Message={
+                    'Subject': {'Data': user_subject},
+                    'Body': {'Text': {'Data': user_body}}
+                }
+            )
+            
+            print("Email notifications sent successfully")
+            
+        except Exception as email_error:
+            print(f"Email sending error: {str(email_error)}")
+            # Continue execution even if email fails
         
         success_response = {
             'statusCode': 200,
@@ -121,7 +186,7 @@ def lambda_handler(event, context):
                 'Access-Control-Allow-Methods': 'POST, OPTIONS'
             },
             'body': json.dumps({
-                'message': 'Contact form submitted successfully!',
+                'message': 'Contact form submitted successfully! You will receive a confirmation email shortly.',
                 'id': submission_id
             })
         }
