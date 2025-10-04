@@ -84,6 +84,18 @@
             text-align: center;
             margin: 20px 0;
         }
+        .debug-log {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
     </style>
 </head>
 <body>
@@ -118,6 +130,10 @@
         </div>
         
         <div id="responseMessage"></div>
+        
+        <div class="debug-log" id="debugLog">
+            <strong>Debug Log:</strong><br>
+        </div>
     </div>
 
     <script>
@@ -139,21 +155,30 @@
                 message: document.getElementById('message').value
             };
             
+            // Log form data
+            logDebug('Form Data:', formData);
+            
             // Show loading state
             submitBtn.disabled = true;
             loading.style.display = 'block';
             responseMessage.innerHTML = '';
             
             try {
+                const requestBody = JSON.stringify(formData);
+                logDebug('Request Body:', requestBody);
+                logDebug('API Endpoint:', API_ENDPOINT);
+                
                 const response = await fetch(API_ENDPOINT, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(formData)
+                    body: requestBody
                 });
                 
+                logDebug('Response Status:', response.status);
                 const result = await response.json();
+                logDebug('Response Body:', result);
                 
                 if (response.ok) {
                     responseMessage.innerHTML = `<div class="message success">${result.message}</div>`;
@@ -162,6 +187,7 @@
                     responseMessage.innerHTML = `<div class="message error">Error: ${result.error}</div>`;
                 }
             } catch (error) {
+                logDebug('Fetch Error:', error.message);
                 responseMessage.innerHTML = `<div class="message error">Network error. Please try again.</div>`;
                 console.error('Error:', error);
             } finally {
@@ -169,6 +195,14 @@
                 loading.style.display = 'none';
             }
         });
+        
+        function logDebug(label, data) {
+            const debugLog = document.getElementById('debugLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${label}: ${typeof data === 'object' ? JSON.stringify(data, null, 2) : data}\n`;
+            debugLog.innerHTML += logEntry;
+            debugLog.scrollTop = debugLog.scrollHeight;
+        }
     </script>
 </body>
 </html>
