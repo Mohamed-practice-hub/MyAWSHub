@@ -11,8 +11,8 @@ table_name = os.environ.get('TABLE_NAME', 'project2-ContactSubmissions')
 table = dynamodb.Table(table_name)
 
 # Configuration
-SENDER_EMAIL = "mhussain.myindia@gmail.com"
-ADMIN_EMAIL = "mhussain.myindia@gmail.com"
+SENDER_EMAIL = "mhussain.myindia@gmail.com"  # Must be verified in SES
+ADMIN_EMAIL = "mhussain.myindia@gmail.com"  # Your admin email
 
 def lambda_handler(event, context):
     # Force logging to work
@@ -123,6 +123,11 @@ def lambda_handler(event, context):
         
         # Send email notifications
         try:
+            print(f"Starting email notifications...")
+            print(f"Sender email: {SENDER_EMAIL}")
+            print(f"Admin email: {ADMIN_EMAIL}")
+            print(f"User email: {email}")
+            
             # Email to admin
             admin_subject = f"New Contact Form Submission: {subject or 'No Subject'}"
             admin_body = f"""
@@ -137,7 +142,8 @@ Submission ID: {submission_id}
 Timestamp: {timestamp}
 """
             
-            ses.send_email(
+            print(f"Sending admin email with subject: {admin_subject}")
+            admin_response = ses.send_email(
                 Source=SENDER_EMAIL,
                 Destination={'ToAddresses': [ADMIN_EMAIL]},
                 Message={
@@ -145,6 +151,7 @@ Timestamp: {timestamp}
                     'Body': {'Text': {'Data': admin_body}}
                 }
             )
+            print(f"Admin email sent successfully. MessageId: {admin_response.get('MessageId')}")
             
             # Confirmation email to user
             user_subject = "Thank you for contacting us!"
@@ -163,19 +170,23 @@ Best regards,
 The Team
 """
             
-            ses.send_email(
+            print(f"Sending user confirmation email to: {email}")
+            user_response = ses.send_email(
                 Source=SENDER_EMAIL,
-                Destination={'ToAddresses': [email]},
+                Destination={'ToAddresses': [email]},  # Send to user's email from form
                 Message={
                     'Subject': {'Data': user_subject},
                     'Body': {'Text': {'Data': user_body}}
                 }
             )
-            
-            print("Email notifications sent successfully")
+            print(f"User confirmation email sent successfully. MessageId: {user_response.get('MessageId')}")
+            print("All email notifications sent successfully")
             
         except Exception as email_error:
             print(f"Email sending error: {str(email_error)}")
+            print(f"Email error type: {type(email_error).__name__}")
+            import traceback
+            print(f"Email error traceback: {traceback.format_exc()}")
             # Continue execution even if email fails
         
         success_response = {
