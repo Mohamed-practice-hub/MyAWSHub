@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wee Watch Home Day Care Child Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 10px;
+            background-color: #f5f5f5;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #333;
+            font-size: 1.5em;
+            margin: 0;
+        }
+        .date-input {
+            padding: 8px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .form-container {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .section {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+        }
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #555;
+        }
+        .row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .row input, .row select, .row textarea {
+            flex: 1;
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 6px;
+            margin-top: 8px;
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 4px;
+            background: #f9f9f9;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+            margin-right: 8px;
+        }
+        .time-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .time-row input {
+            width: 80px;
+        }
+        .diaper-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .diaper-time {
+            width: 45px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        .diaper-select {
+            width: 60px;
+            font-size: 12px;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 60px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        @media (max-width: 480px) {
+            body { padding: 5px; }
+            .form-container { padding: 10px; }
+            h1 { font-size: 1.1em; }
+            .header { gap: 5px; }
+            .checkbox-group { grid-template-columns: repeat(3, 1fr); gap: 4px; }
+            .checkbox-item { padding: 3px; font-size: 11px; }
+            .diaper-row { gap: 5px; }
+            .diaper-time { width: 35px; font-size: 11px; }
+            .diaper-select { width: 50px; font-size: 11px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🧸 Wee Watch Report</h1>
+        <input type="date" id="date" name="date" class="date-input">
+    </div>
+    
+    <div class="form-container">
+        <form id="childcareForm">
+            <!-- Mood Section -->
+            <div class="section">
+                <div class="row">
+                    <span style="width: 100px;">Mood Today:</span>
+                    <select id="mood" name="mood">
+                        <option value="">Select mood...</option>
+                        <option value="happy">😊 Happy</option>
+                        <option value="excited">🤩 Excited</option>
+                        <option value="calm">😌 Calm</option>
+                        <option value="tired">😴 Tired</option>
+                        <option value="cranky">😤 Cranky</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Activities Section -->
+            <div class="section">
+                <div class="section-title">Activities Completed:</div>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="reading" name="activities" value="reading">
+                        <label for="reading">📚 Reading</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="arts" name="activities" value="arts">
+                        <label for="arts">🎨 Arts</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="outdoor" name="activities" value="outdoor">
+                        <label for="outdoor">🌳 Outdoor</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="music" name="activities" value="music">
+                        <label for="music">🎵 Music</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="indoorplay" name="activities" value="indoorplay">
+                        <label for="indoorplay">🏠 Indoor Play</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="dancing" name="activities" value="dancing">
+                        <label for="dancing">💃 Dancing</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nap Time Section -->
+            <div class="section">
+                <div class="row">
+                    <span style="width: 80px;">Nap Time:</span>
+                    <div class="time-row">
+                        <input type="time" id="napFrom" name="napFrom" value="13:00">
+                        <span>to</span>
+                        <input type="time" id="napTo" name="napTo" value="15:00">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Meals Section -->
+            <div class="section">
+                <div class="section-title">Meals & Snacks:</div>
+                <div class="row">
+                    <span style="width: 80px;">Lunch:</span>
+                    <input type="text" id="lunch" name="lunch" placeholder="What was eaten for lunch...">
+                </div>
+                <div class="row">
+                    <span style="width: 80px;">AM Snack:</span>
+                    <input type="text" id="amSnack" name="amSnack" placeholder="Morning snack details...">
+                </div>
+                <div class="row">
+                    <span style="width: 80px;">PM Snack:</span>
+                    <input type="text" id="pmSnack" name="pmSnack" placeholder="Afternoon snack details...">
+                </div>
+            </div>
+
+            <!-- Diaper Changes Section -->
+            <div class="section">
+                <div class="section-title">Diaper Changes:</div>
+                <div class="diaper-row">
+                    <span class="diaper-time">11:00</span>
+                    <select class="diaper-select" id="diaper11" name="diaper11">
+                        <option value="">-</option>
+                        <option value="wet">Wet</option>
+                        <option value="dry">Dry</option>
+                        <option value="bm">BM</option>
+                    </select>
+                    <span class="diaper-time">1:00</span>
+                    <select class="diaper-select" id="diaper1" name="diaper1">
+                        <option value="">-</option>
+                        <option value="wet">Wet</option>
+                        <option value="dry">Dry</option>
+                        <option value="bm">BM</option>
+                    </select>
+                    <span class="diaper-time">3:30</span>
+                    <select class="diaper-select" id="diaper330" name="diaper330">
+                        <option value="">-</option>
+                        <option value="wet">Wet</option>
+                        <option value="dry">Dry</option>
+                        <option value="bm">BM</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Notes Section -->
+            <div class="section">
+                <div class="section-title">Supplies Needed & Additional Notes:</div>
+                <textarea id="notes" name="notes" placeholder="List supplies needed or any additional observations, achievements, or concerns..."></textarea>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Set today's date as default
+        document.getElementById('date').valueAsDate = new Date();
+
+        // Auto-save functionality (optional)
+        document.getElementById('childcareForm').addEventListener('change', function(e) {
+            const formData = new FormData(this);
+            const activities = [];
+            
+            // Get selected activities
+            document.querySelectorAll('input[name="activities"]:checked').forEach(checkbox => {
+                activities.push(checkbox.value);
+            });
+            
+            // Create report object
+            const report = {
+                date: formData.get('date') || document.getElementById('date').value,
+                mood: formData.get('mood'),
+                activities: activities,
+                napFrom: formData.get('napFrom'),
+                napTo: formData.get('napTo'),
+                lunch: formData.get('lunch'),
+                amSnack: formData.get('amSnack'),
+                pmSnack: formData.get('pmSnack'),
+                diaper11: formData.get('diaper11'),
+                diaper1: formData.get('diaper1'),
+                diaper330: formData.get('diaper330'),
+                notes: formData.get('notes')
+            };
+            
+            console.log('Report updated:', report);
+        });
+    </script>
+</body>
+</html>

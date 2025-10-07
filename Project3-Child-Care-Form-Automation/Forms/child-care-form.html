@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Child Care Summary</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h2, h3 {
+      text-align: center;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    input[type="text"], input[type="time"], input[type="date"], textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    .checkbox-group {
+      margin-top: 10px;
+    }
+    .checkbox-group input[type="checkbox"] {
+      width: auto;
+      margin-right: 8px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+    }
+    .section {
+      margin-bottom: 20px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .submit-btn {
+      background-color: #4CAF50;
+      color: white;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      width: 100%;
+      margin-top: 20px;
+    }
+    .submit-btn:hover {
+      background-color: #45a049;
+    }
+    .message {
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      text-align: center;
+    }
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>wee learn My Day</h2>
+  <h3>weewatch – Quality Licensed Home Child Care</h3>
+
+  <form id="childCareForm">
+    <div class="section">
+      <label for="name">Child Name: *</label>
+      <input type="text" id="name" name="name" required>
+
+      <label for="date">Date: *</label>
+      <input type="date" id="date" name="date" required>
+    </div>
+
+    <div class="section">
+      <h3>Feeding</h3>
+      <label for="bottleAmount">Bottle Amount:</label>
+      <input type="text" id="bottleAmount" name="bottleAmount" placeholder="e.g., 6oz">
+      
+      <label for="bottleTime">Bottle Time:</label>
+      <input type="time" id="bottleTime" name="bottleTime">
+    </div>
+
+    <div class="section">
+      <h3>Sleep</h3>
+      <label for="napFrom">Nap From:</label>
+      <input type="time" id="napFrom" name="napFrom">
+      
+      <label for="napTo">Nap To:</label>
+      <input type="time" id="napTo" name="napTo">
+    </div>
+
+    <div class="section">
+      <h3>Daily Notes</h3>
+      <label for="mood">My mood today:</label>
+      <textarea id="mood" name="mood" rows="2" placeholder="Happy, fussy, sleepy, etc."></textarea>
+
+      <label for="milestones">Milestones:</label>
+      <textarea id="milestones" name="milestones" rows="2" placeholder="New skills, developments, etc."></textarea>
+
+      <label for="fun">We had fun:</label>
+      <textarea id="fun" name="fun" rows="2" placeholder="Activities, games, etc."></textarea>
+
+      <label for="comments">Comments:</label>
+      <textarea id="comments" name="comments" rows="2" placeholder="Additional notes"></textarea>
+    </div>
+
+    <div class="section">
+      <h3>Meals</h3>
+      <label for="amSnack">A.M. Snack:</label>
+      <input type="text" id="amSnack" name="amSnack" placeholder="e.g., crackers, fruit">
+
+      <label for="lunch">Lunch:</label>
+      <input type="text" id="lunch" name="lunch" placeholder="e.g., sandwich, soup">
+
+      <label for="pmSnack">P.M. Snack:</label>
+      <input type="text" id="pmSnack" name="pmSnack" placeholder="e.g., yogurt, cookies">
+
+      <label>I ate:</label>
+      <div class="checkbox-group">
+        <input type="checkbox" id="everything" name="ate" value="everything">
+        <label for="everything">Everything</label><br>
+        <input type="checkbox" id="some" name="ate" value="some">
+        <label for="some">Some</label><br>
+        <input type="checkbox" id="notHungry" name="ate" value="not-hungry">
+        <label for="notHungry">I wasn't hungry</label>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>Diapers/Toileting</h3>
+      <table>
+        <tr>
+          <th>Entry</th>
+          <th>Time</th>
+          <th>Type (D/W/BM)</th>
+        </tr>
+        <tr>
+          <td>Entry 1</td>
+          <td><input type="time" name="diaper1Time"></td>
+          <td><input type="text" name="diaper1Type" placeholder="D, W, or BM"></td>
+        </tr>
+        <tr>
+          <td>Entry 2</td>
+          <td><input type="time" name="diaper2Time"></td>
+          <td><input type="text" name="diaper2Type" placeholder="D, W, or BM"></td>
+        </tr>
+        <tr>
+          <td>Entry 3</td>
+          <td><input type="time" name="diaper3Time"></td>
+          <td><input type="text" name="diaper3Type" placeholder="D, W, or BM"></td>
+        </tr>
+        <tr>
+          <td>Supplies Needed:</td>
+          <td colspan="2"><input type="text" name="suppliesNeeded" placeholder="Diapers, wipes, etc."></td>
+        </tr>
+      </table>
+    </div>
+
+    <button type="submit" class="submit-btn">Submit Daily Report</button>
+  </form>
+
+  <div id="responseMessage"></div>
+
+  <script>
+    document.getElementById('date').valueAsDate = new Date();
+    
+    const API_ENDPOINT = 'https://your-api-gateway-url.execute-api.us-east-1.amazonaws.com/prod/childcare';
+    
+    document.getElementById('childCareForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const formData = new FormData(this);
+      const data = {};
+      
+      for (let [key, value] of formData.entries()) {
+        if (data[key]) {
+          if (Array.isArray(data[key])) {
+            data[key].push(value);
+          } else {
+            data[key] = [data[key], value];
+          }
+        } else {
+          data[key] = value;
+        }
+      }
+      
+      const responseDiv = document.getElementById('responseMessage');
+      
+      try {
+        const response = await fetch(API_ENDPOINT, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+          responseDiv.innerHTML = `<div class="message success">${result.message}</div>`;
+          this.reset();
+          document.getElementById('date').valueAsDate = new Date();
+        } else {
+          responseDiv.innerHTML = `<div class="message error">Error: ${result.error}</div>`;
+        }
+      } catch (error) {
+        responseDiv.innerHTML = `<div class="message error">Network error. Please try again.</div>`;
+        console.error('Error:', error);
+      }
+    });
+  </script>
+
+</body>
+</html>

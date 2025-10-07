@@ -1,0 +1,39 @@
+{
+  "api-test": {
+    "body": "{\"name\":\"Emma\",\"date\":\"2024-10-04\",\"bottleAmount\":\"6oz\",\"bottleTime\":\"10:30\",\"napFrom\":\"13:00\",\"napTo\":\"15:00\",\"mood\":\"Happy and playful\",\"milestones\":\"Said mama\",\"fun\":\"Played with blocks\",\"amSnack\":\"Crackers\",\"lunch\":\"Mac and cheese\",\"pmSnack\":\"Apple slices\",\"ate\":[\"everything\"],\"diaper1Time\":\"09:00\",\"diaper1Type\":\"W\",\"diaper2Time\":\"12:00\",\"diaper2Type\":\"BM\",\"diaper3Time\":\"16:00\",\"diaper3Type\":\"W\",\"comments\":\"Great day overall!\"}",
+    "httpMethod": "POST",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  },
+  
+  "direct-test": {
+    "name": "Emma",
+    "date": "2024-10-04",
+    "bottleAmount": "6oz",
+    "bottleTime": "10:30",
+    "napFrom": "13:00",
+    "napTo": "15:00",
+    "mood": "Happy and playful",
+    "milestones": "Said mama",
+    "fun": "Played with blocks",
+    "amSnack": "Crackers",
+    "lunch": "Mac and cheese",
+    "pmSnack": "Apple slices",
+    "ate": ["everything"],
+    "diaper1Time": "09:00",
+    "diaper1Type": "W",
+    "diaper2Time": "12:00",
+    "diaper2Type": "BM",
+    "diaper3Time": "16:00",
+    "diaper3Type": "W",
+    "comments": "Great day overall!"
+  },
+  
+  "minimal-test": {
+    "name": "Emma",
+    "date": "2024-10-04",
+    "mood": "Happy",
+    "lunch": "Sandwich"
+  }
+}
