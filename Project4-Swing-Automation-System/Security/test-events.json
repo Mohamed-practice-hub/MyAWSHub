@@ -1,0 +1,12 @@
+{
+  "default-test": {},
+  "single-symbol": {
+    "symbols": ["AAPL"]
+  },
+  "multiple-symbols": {
+    "symbols": ["AAPL", "MSFT", "GOOGL", "TSLA"]
+  },
+  "custom-symbols": {
+    "symbols": ["SPY", "QQQ", "IWM"]
+  }
+}

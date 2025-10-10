@@ -25,7 +25,7 @@ try:
         "APCA-API-SECRET-KEY": SECRET_KEY
     }
     s3_client = boto3.client('s3')
-    S3_BUCKET = os.environ.get('S3_BUCKET', 'project4-swing-automation-data')
+    S3_BUCKET = os.environ.get('S3_BUCKET', 'swing-automation-data-processor')
 except Exception as e:
     print(f"Initialization error: {e}")
     API_KEY = SECRET_KEY = None
