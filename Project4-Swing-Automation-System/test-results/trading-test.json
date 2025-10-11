@@ -1,0 +1,1 @@
+{"statusCode": 200, "body": "{\"message\": \"Processed 1 symbols, executed 0 trades\", \"trades\": [], \"results\": [{\"symbol\": \"AAPL\", \"timestamp\": \"2025-10-11T20:14:45.247982\", \"current_price\": 254.43, \"rsi\": 66.81, \"ema\": 238.9, \"signal\": \"HOLD\"}]}"}

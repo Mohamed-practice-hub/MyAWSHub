@@ -1,0 +1,118 @@
+{
+  "date": "2025-10-11",
+  "timestamp": "2025-10-11T18:19:59.525447",
+  "symbols_analyzed": 5,
+  "signals_generated": 0,
+  "results": [
+    {
+      "symbol": "AAPL",
+      "timestamp": "2025-10-11T18:19:58.754204",
+      "price": 254.43,
+      "rsi": 66.81,
+      "ema": 238.52,
+      "sentiment": {
+        "overall_score": 0.0,
+        "confidence": 0.66,
+        "sources": {
+          "news": 0.0,
+          "reddit": 0
+        }
+      },
+      "signal": {
+        "action": "HOLD",
+        "strength": "WEAK",
+        "confidence": 0.66,
+        "sentiment_influence": 0.0,
+        "reasoning": "RSI: 66.81, EMA: 238.52, Price: 254.43, Sentiment: 0.0"
+      }
+    },
+    {
+      "symbol": "NVDA",
+      "timestamp": "2025-10-11T18:19:58.973985",
+      "price": 178.43,
+      "rsi": 59.12,
+      "ema": 176.99,
+      "sentiment": {
+        "overall_score": 0.0,
+        "confidence": 0.66,
+        "sources": {
+          "news": 0.0,
+          "reddit": 0
+        }
+      },
+      "signal": {
+        "action": "HOLD",
+        "strength": "WEAK",
+        "confidence": 0.66,
+        "sentiment_influence": 0.0,
+        "reasoning": "RSI: 59.12, EMA: 176.99, Price: 178.43, Sentiment: 0.0"
+      }
+    },
+    {
+      "symbol": "MSFT",
+      "timestamp": "2025-10-11T18:19:59.146752",
+      "price": 509.23,
+      "rsi": 53.08,
+      "ema": 509.84,
+      "sentiment": {
+        "overall_score": 0.15,
+        "confidence": 0.66,
+        "sources": {
+          "news": 0.3,
+          "reddit": 0
+        }
+      },
+      "signal": {
+        "action": "HOLD",
+        "strength": "WEAK",
+        "confidence": 0.66,
+        "sentiment_influence": 0.15,
+        "reasoning": "RSI: 53.08, EMA: 509.84, Price: 509.23, Sentiment: 0.15"
+      }
+    },
+    {
+      "symbol": "AMD",
+      "timestamp": "2025-10-11T18:19:59.321789",
+      "price": 160.9,
+      "rsi": 48.29,
+      "ema": 161.87,
+      "sentiment": {
+        "overall_score": -0.15,
+        "confidence": 0.66,
+        "sources": {
+          "news": -0.3,
+          "reddit": 0
+        }
+      },
+      "signal": {
+        "action": "HOLD",
+        "strength": "WEAK",
+        "confidence": 0.66,
+        "sentiment_influence": -0.15,
+        "reasoning": "RSI: 48.29, EMA: 161.87, Price: 160.9, Sentiment: -0.15"
+      }
+    },
+    {
+      "symbol": "TSLA",
+      "timestamp": "2025-10-11T18:19:59.492014",
+      "price": 425.85,
+      "rsi": 83.89,
+      "ema": 385.88,
+      "sentiment": {
+        "overall_score": 0.1,
+        "confidence": 0.66,
+        "sources": {
+          "news": 0.2,
+          "reddit": 0
+        }
+      },
+      "signal": {
+        "action": "HOLD",
+        "strength": "WEAK",
+        "confidence": 0.66,
+        "sentiment_influence": 0.1,
+        "reasoning": "RSI: 83.89, EMA: 385.88, Price: 425.85, Sentiment: 0.1"
+      }
+    }
+  ]
+}
