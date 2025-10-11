@@ -284,7 +284,7 @@ This is an automated alert from your swing trading bot."""
     print(f"\n📊 Analysis Summary:")
     print(f"   Total symbols processed: {len(results)}")
     for result in results:
-        print(f"   {result['symbol']}: {result['signal']} (RSI: {result['rsi']}, Price: ${result['price']})")
+        print(f"   {result['symbol']}: {result['signal']} (RSI: {result['rsi']}, Price: ${result['current_price']})")
     
     # Save results to S3 with organized structure
     if results:
@@ -324,7 +324,7 @@ HOLD Signals: {len(results) - len(buy_signals) - len(sell_signals)}
 Detailed Results:
 """
             for result in results:
-                summary_body += f"\n{result['symbol']}: {result['signal']} (Price: ${result['price']}, RSI: {result['rsi']}, EMA: ${result['ema']:.2f})"
+                summary_body += f"\n{result['symbol']}: {result['signal']} (Price: ${result['current_price']}, RSI: {result['rsi']}, EMA: ${result['ema']:.2f})"
             
             summary_body += f"\n\nAnalysis completed at: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')} UTC"
             send_email(summary_subject, summary_body)
