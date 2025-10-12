@@ -34,27 +34,14 @@ EventBridge → Lambda Functions → Alpaca API → Technical Analysis → Senti
 - S3 data storage
 - Comprehensive email notifications
 
-**Email Notifications**: Always sends detailed analysis report with:
-- All 8 symbols analyzed
-- Signal breakdown (BUY/SELL/HOLD counts)
-- Technical details for each symbol
-- Execution status and timing
-
 ### 2. Sentiment-Enhanced Bot (`swing-sentiment-enhanced-lambda`) ✅ ACTIVE
 **Purpose**: Enhanced analysis with multi-source sentiment data
 **Schedule**: Daily at 9:45 AM Toronto time (weekdays) - Currently Active
 **Features**:
-- All features of main bot PLUS:
 - Multi-source sentiment analysis (Finnhub + NewsAPI)
 - Adaptive RSI thresholds based on sentiment
 - Enhanced signal confidence scoring
 - Sentiment-influenced decision making
-
-**Email Notifications**: Always sends enhanced analysis report with:
-- All technical analysis data
-- Sentiment scores and confidence levels
-- Source breakdown (Finnhub, NewsAPI, Reddit)
-- Enhanced reasoning for each signal
 
 ### 3. Performance Analyzer (`swing-performance-analyzer`)
 **Purpose**: Historical signal accuracy and profit/loss analysis
@@ -65,11 +52,37 @@ EventBridge → Lambda Functions → Alpaca API → Technical Analysis → Senti
 - Profit/loss analysis
 - Top/worst performer identification
 
-**Email Notifications**: Always sends performance report with:
-- Overall success rate and metrics
-- Signal breakdown by type (BUY/SELL)
-- Top and worst performing signals
-- Detailed historical analysis
+### 4. Trading Executor (`swing-trading-executor`) 🚨 LIVE TRADING
+**Purpose**: Executes actual BUY/SELL orders via Alpaca paper trading
+**Features**:
+- Real order execution (paper trading account)
+- Market order placement
+- Order tracking and status monitoring
+- Comprehensive trade execution emails
+
+### 5. Portfolio Reporter (`swing-portfolio-reporter`) 📊 P&L TRACKING
+**Purpose**: Real-time portfolio monitoring and profit/loss reporting
+**Features**:
+- Current positions and market values
+- Unrealized profit/loss calculations
+- Recent trading activity
+- Account summary and buying power
+
+### 6. Webhook Trading (`swing-webhook-trading`) 🔗 REAL-TIME
+**Purpose**: Processes external trading signals via webhooks
+**Features**:
+- Finnhub webhook integration
+- Real-time signal processing
+- Instant trade execution
+- External system integration
+**Webhook URL**: `https://8ekleumcyf.execute-api.us-east-1.amazonaws.com/prod/webhook`
+
+### 7. Trading Test (`swing-trading-test`) 🧪 TESTING
+**Purpose**: Forced trading tests to validate BUY/SELL functionality
+**Features**:
+- Forced BUY/SELL order placement
+- Trading system validation
+- Test result reporting
 
 ## 📧 Email Notification System
 
@@ -109,10 +122,17 @@ Adjusted BUY Threshold:  RSI < (30 + sentiment_score * 5 * confidence)
 Adjusted SELL Threshold: RSI > (70 - sentiment_score * 5 * confidence)
 ```
 
-### Signal Strength Classification
-- **STRONG**: High confidence + extreme RSI values
-- **MODERATE**: Medium confidence + standard thresholds
-- **WEAK**: Low confidence or neutral conditions
+### Trade Execution
+- **Paper Trading**: All trades executed in Alpaca paper account
+- **Market Orders**: Immediate execution at current market price
+- **Order Tracking**: All orders logged with IDs and status
+- **Risk Management**: 1 share per trade for testing
+
+### Webhook Integration
+- **Real-time Signals**: External systems can trigger trades
+- **Finnhub Integration**: Price alerts and technical indicators
+- **Authentication**: Secure webhook with Finnhub secret validation
+- **Instant Execution**: Sub-second trade execution from external signals
 
 ## 📁 S3 Data Structure
 ```
@@ -129,39 +149,53 @@ swing-automation-data-processor/
 │   └── QQQ/
 ├── signals/                  # BUY/SELL signals only
 ├── performance-reports/      # Weekly performance analysis
+├── trading-results/          # Actual trade executions
+├── webhook-trades/           # Webhook-triggered trades
 └── errors/                   # Error logs
 ```
 
 ## 🚀 Manual Triggers
 
-### Test All Functions
+### Analysis Functions
 ```bash
 # Sentiment-enhanced analysis (currently active)
-aws lambda invoke --function-name "swing-sentiment-enhanced-lambda" --payload '{"symbols": ["AAPL", "NVDA", "MSFT", "AMD", "TSLA", "ARKK", "BOTZ", "QQQ"]}' response.json
-
-# Main trading analysis
-aws lambda invoke --function-name "swing-automation-data-processor-lambda" --payload '{"symbols": ["AAPL", "NVDA", "MSFT", "AMD", "TSLA", "ARKK", "BOTZ", "QQQ"]}' response.json
+aws lambda invoke --function-name "swing-sentiment-enhanced-lambda" --payload "eyJzeW1ib2xzIjpbIkFBUEwiLCJOVkRBIiwiTVNGVCIsIkFNRCIsIlRTTEEiLCJBUktLIiwiQk9UWiIsIlFRUSJdfQ==" response.json
 
 # Performance analysis
-aws lambda invoke --function-name "swing-performance-analyzer" --payload '{"days_back": 30}' response.json
+aws lambda invoke --function-name "swing-performance-analyzer" --payload "eyJkYXlzX2JhY2siOiAzMH0=" response.json
 ```
 
-### Single Symbol Test
+### Trading Functions
 ```bash
-# Test with single symbol
-aws lambda invoke --function-name "swing-sentiment-enhanced-lambda" --payload '{"symbols": ["AAPL"]}' response.json
+# Execute trades based on current signals
+aws lambda invoke --function-name "swing-trading-executor" --payload "eyJzeW1ib2xzIjpbIkFBUEwiXX0=" response.json
+
+# Get portfolio report with P&L
+aws lambda invoke --function-name "swing-portfolio-reporter" --payload "{}" response.json
+
+# Test forced BUY order
+aws lambda invoke --function-name "swing-trading-test" --payload "eyJ0ZXN0X21vZGUiOiJidXkiLCJzeW1ib2wiOiJBQVBMIn0=" response.json
+
+# Test webhook trading
+aws lambda invoke --function-name "swing-webhook-trading" --payload "eyJzeW1ib2wiOiJNU0ZUIiwiYWN0aW9uIjoiQlVZIiwicXR5IjoxfQ==" response.json
 ```
 
-### Quick Status Check
+### Webhook Testing
+```bash
+# Test webhook via HTTP
+curl -X POST "https://8ekleumcyf.execute-api.us-east-1.amazonaws.com/prod/webhook" \
+  -H "Content-Type: application/json" \
+  -H "X-Finnhub-Secret: d3l5chpr01qq28em0po0" \
+  -d '{"symbol":"AAPL","action":"BUY","qty":1}'
+```
+
+### System Status
 ```bash
 # Check all functions
 aws lambda list-functions --query "Functions[?contains(FunctionName, 'swing')]"
 
-# Check schedules
-aws scheduler list-schedules --query "Schedules[?contains(Name, 'swing')]"
-
-# Check recent data
-aws s3 ls s3://swing-automation-data-processor/daily-analysis/ --recursive | tail -5
+# Check recent webhook activity
+aws s3 ls s3://swing-automation-data-processor/webhook-trades/2025/10/ --recursive
 ```
 
 ## 🔑 API Keys & Configuration
@@ -249,7 +283,10 @@ cd Scripts && deploy-lambda.bat
 ## 🎯 System Status: 100% OPERATIONAL ✅
 
 ### Current Configuration
-- ✅ **3 Lambda Functions**: All deployed and tested
+- ✅ **7 Lambda Functions**: All deployed and tested
+- ✅ **Live Trading**: Paper trading account with real order execution
+- ✅ **Webhook Integration**: Finnhub real-time signals operational
+- ✅ **Portfolio Tracking**: Real-time P&L monitoring
 - ✅ **Sentiment Analysis**: Active for daily trading
 - ✅ **8 Symbol Portfolio**: Stocks + ETFs analyzed daily
 - ✅ **Comprehensive Emails**: All functions send detailed reports
@@ -257,8 +294,18 @@ cd Scripts && deploy-lambda.bat
 - ✅ **Performance Tracking**: Historical analysis active
 - ✅ **Cost Optimized**: Under $5/month operation
 
+### Trading Capabilities
+- 🚨 **Real Order Execution**: Proven with successful BUY/SELL orders
+- 📊 **Portfolio Management**: $100,000 paper trading account
+- 🔗 **Webhook Trading**: External signals trigger instant trades
+- 📧 **Trade Notifications**: Detailed execution reports via email
+- 🧪 **Testing Framework**: Comprehensive trading validation tools
+
+### Webhook URL
+**Finnhub Integration**: `https://8ekleumcyf.execute-api.us-east-1.amazonaws.com/prod/webhook`
+
 ### Next Steps
-**None required** - System is fully operational and automated!
+**System is fully operational** - Configure Finnhub alerts for real-time tradingal and automated!
 
 The system will:
 1. **Analyze 8 symbols daily** with sentiment-enhanced analysis

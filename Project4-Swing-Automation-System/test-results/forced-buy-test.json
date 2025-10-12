@@ -1,0 +1,1 @@
+{"statusCode": 200, "body": "{\"message\": \"Trading test completed - 1 orders tested\", \"test_results\": [{\"action\": \"BUY\", \"symbol\": \"AAPL\", \"success\": true, \"order_id\": \"f9c23604-39cd-4410-9c51-ffed0b70e78b\", \"order_status\": \"accepted\", \"qty\": 1, \"error\": null}]}"}

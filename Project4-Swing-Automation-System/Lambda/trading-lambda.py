@@ -75,10 +75,15 @@ def calculate_ema(prices, period=20):
         ema = (price - ema) * multiplier + ema
     return ema
 
-def place_order(symbol, side, qty=1):
-    """Place buy/sell order via Alpaca Trading API"""
+def place_order_with_stops(symbol, side, qty=1, current_price=None):
+    """Place order with stop loss and take profit"""
     url = f"{TRADING_URL}/v2/orders"
     
+    # Suggested percentages for swing trading
+    STOP_LOSS_PCT = 0.05    # 5% stop loss
+    TAKE_PROFIT_PCT = 0.10  # 10% take profit (2:1 risk/reward)
+    
+    # Main market order
     order_data = {
         "symbol": symbol,
         "qty": qty,
@@ -88,9 +93,91 @@ def place_order(symbol, side, qty=1):
     }
     
     try:
+        # Place main order
         response = requests.post(url, headers=HEADERS, json=order_data)
         response.raise_for_status()
-        return response.json()
+        main_order = response.json()
+        
+        # Place stop loss and take profit orders
+        if current_price and main_order.get('status') == 'accepted':
+            if side == 'buy':
+                # For BUY orders: stop loss below, take profit above
+                stop_price = round(current_price * (1 - STOP_LOSS_PCT), 2)
+                profit_price = round(current_price * (1 + TAKE_PROFIT_PCT), 2)
+                
+                # Stop loss order (sell if price drops)
+                stop_order = {
+                    "symbol": symbol,
+                    "qty": qty,
+                    "side": "sell",
+                    "type": "stop",
+                    "stop_price": stop_price,
+                    "time_in_force": "gtc"  # Good till cancelled
+                }
+                
+                # Take profit order (sell if price rises)
+                profit_order = {
+                    "symbol": symbol,
+                    "qty": qty,
+                    "side": "sell",
+                    "type": "limit",
+                    "limit_price": profit_price,
+                    "time_in_force": "gtc"
+                }
+                
+            else:  # sell orders
+                # For SELL orders: stop loss above, take profit below
+                stop_price = round(current_price * (1 + STOP_LOSS_PCT), 2)
+                profit_price = round(current_price * (1 - TAKE_PROFIT_PCT), 2)
+                
+                # Stop loss order (buy if price rises)
+                stop_order = {
+                    "symbol": symbol,
+                    "qty": qty,
+                    "side": "buy",
+                    "type": "stop",
+                    "stop_price": stop_price,
+                    "time_in_force": "gtc"
+                }
+                
+                # Take profit order (buy if price drops)
+                profit_order = {
+                    "symbol": symbol,
+                    "qty": qty,
+                    "side": "buy",
+                    "type": "limit",
+                    "limit_price": profit_price,
+                    "time_in_force": "gtc"
+                }
+            
+            # Place stop loss order
+            try:
+                stop_response = requests.post(url, headers=HEADERS, json=stop_order)
+                stop_result = stop_response.json() if stop_response.status_code == 201 else None
+            except:
+                stop_result = None
+            
+            # Place take profit order
+            try:
+                profit_response = requests.post(url, headers=HEADERS, json=profit_order)
+                profit_result = profit_response.json() if profit_response.status_code == 201 else None
+            except:
+                profit_result = None
+            
+            # Return combined results
+            main_order['stop_loss'] = {
+                'price': stop_price,
+                'order_id': stop_result.get('id') if stop_result else None,
+                'status': stop_result.get('status') if stop_result else 'failed'
+            }
+            main_order['take_profit'] = {
+                'price': profit_price,
+                'order_id': profit_result.get('id') if profit_result else None,
+                'status': profit_result.get('status') if profit_result else 'failed'
+            }
+        
+        return main_order
+        
     except Exception as e:
         print(f"Error placing {side} order for {symbol}: {e}")
         return None
@@ -126,6 +213,8 @@ TRADE DETAILS:
   Quantity: {trade['qty']} shares
   Order ID: {trade.get('id', 'N/A')}
   Price: ${trade.get('filled_avg_price', 'Market')}
+  Stop Loss: ${trade.get('stop_loss_price', 'N/A')} (ID: {trade.get('stop_loss_id', 'N/A')[:8] if trade.get('stop_loss_id') else 'N/A'})
+  Take Profit: ${trade.get('take_profit_price', 'N/A')} (ID: {trade.get('take_profit_id', 'N/A')[:8] if trade.get('take_profit_id') else 'N/A'})
   Time: {trade.get('created_at', 'N/A')}
 """
     
@@ -186,8 +275,8 @@ def lambda_handler(event, context):
         # Generate signal
         if rsi < 30 and current_price > ema:
             signal = "BUY"
-            # Execute BUY order
-            order_result = place_order(symbol, "buy", qty=1)
+            # Execute BUY order with stop loss and take profit
+            order_result = place_order_with_stops(symbol, "buy", qty=1, current_price=current_price)
             if order_result:
                 trades.append({
                     'symbol': symbol,
@@ -195,14 +284,18 @@ def lambda_handler(event, context):
                     'qty': 1,
                     'status': order_result.get('status'),
                     'id': order_result.get('id'),
-                    'created_at': order_result.get('created_at')
+                    'created_at': order_result.get('created_at'),
+                    'stop_loss_price': order_result.get('stop_loss', {}).get('price'),
+                    'take_profit_price': order_result.get('take_profit', {}).get('price'),
+                    'stop_loss_id': order_result.get('stop_loss', {}).get('order_id'),
+                    'take_profit_id': order_result.get('take_profit', {}).get('order_id')
                 })
-                print(f"🟢 BUY order placed for {symbol}")
+                print(f"🟢 BUY order placed for {symbol} with stops")
             
         elif rsi > 70 and current_price < ema:
             signal = "SELL"
-            # Execute SELL order
-            order_result = place_order(symbol, "sell", qty=1)
+            # Execute SELL order with stop loss and take profit
+            order_result = place_order_with_stops(symbol, "sell", qty=1, current_price=current_price)
             if order_result:
                 trades.append({
                     'symbol': symbol,
@@ -210,9 +303,13 @@ def lambda_handler(event, context):
                     'qty': 1,
                     'status': order_result.get('status'),
                     'id': order_result.get('id'),
-                    'created_at': order_result.get('created_at')
+                    'created_at': order_result.get('created_at'),
+                    'stop_loss_price': order_result.get('stop_loss', {}).get('price'),
+                    'take_profit_price': order_result.get('take_profit', {}).get('price'),
+                    'stop_loss_id': order_result.get('stop_loss', {}).get('order_id'),
+                    'take_profit_id': order_result.get('take_profit', {}).get('order_id')
                 })
-                print(f"🔴 SELL order placed for {symbol}")
+                print(f"🔴 SELL order placed for {symbol} with stops")
         else:
             signal = "HOLD"
         
