@@ -1,0 +1,20 @@
+﻿{
+    "events": [
+        {
+            "logStreamName": "2025/10/13/[$LATEST]56d0b50767384a71985ad2a76a944a92",
+            "timestamp": 1760393528791,
+            "message": "INIT_START Runtime Version: python:3.13.v63\tRuntime Version ARN: arn:aws:lambda:us-east-1::runtime:6e38c6392184a42a11f69b8b07e902e6615b10d7a884c3e3cbd4d0b8a5e42c07\n",
+            "ingestionTime": 1760393530274,
+            "eventId": "39258087534710273542332414524387182470881790820899880960"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]56d0b50767384a71985ad2a76a944a92",
+            "timestamp": 1760393529303,
+            "message": "START RequestId: a7eb60a9-48fc-46bf-841d-0e27c854cd21 Version: $LATEST\n",
+            "ingestionTime": 1760393530274,
+            "eventId": "39258087546128255083980093572853470226477751911961853953"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]56d0b50767384a71985ad2a76a944a92",
+            "timestamp": 1760393529303,
+            "message": 

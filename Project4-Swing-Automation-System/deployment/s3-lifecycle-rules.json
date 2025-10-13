@@ -1,0 +1,22 @@
+{
+  "Rules": [
+    {
+      "ID": "DailyAnalysisRetention",
+      "Prefix": "daily-analysis/",
+      "Status": "Enabled",
+      "Transitions": [
+        {"Days": 30, "StorageClass": "STANDARD_IA"}
+      ],
+      "Expiration": {"Days": 180}
+    },
+    {
+      "ID": "WebhookTradesRetention",
+      "Prefix": "webhook-trades/",
+      "Status": "Enabled",
+      "Transitions": [
+        {"Days": 30, "StorageClass": "STANDARD_IA"}
+      ],
+      "Expiration": {"Days": 365}
+    }
+  ]
+}

@@ -1,5 +1,15 @@
-import boto3
 import json
+import time
+import os
+import hashlib
+import hmac
+from datetime import datetime
+try:
+    import boto3
+    BOTO3_AVAILABLE = True
+except Exception:
+    boto3 = None
+    BOTO3_AVAILABLE = False
 try:
     import requests
     REQUESTS_AVAILABLE = True
@@ -7,40 +17,94 @@ except Exception:
     REQUESTS_AVAILABLE = False
     import urllib.request as _urllib_request
     import urllib.error as _urllib_error
-import os
-import time
-import hashlib
-import hmac
-from datetime import datetime
+    import urllib.parse as _urllib_parse
+else:
+    import urllib.parse as _urllib_parse
 
 # Simple logger
 def log(msg, level='INFO'):
     ts = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')
     print(f"{ts} [{level}] {msg}")
 
+
+def _request_with_retries(method, url, headers=None, params=None, json_body=None, timeout=10, retries=3):
+    backoff = 1
+    last_err = None
+    for attempt in range(1, retries + 1):
+        try:
+            if REQUESTS_AVAILABLE:
+                resp = requests.request(method, url, headers=headers, params=params, json=json_body, timeout=timeout)
+                if resp.status_code < 200 or resp.status_code >= 300:
+                    log(f"Alpaca {method} {url} returned status {resp.status_code}: {resp.text}", level='WARNING')
+                    resp.raise_for_status()
+                return resp.json()
+            else:
+                if params:
+                    url_with_q = f"{url}?{_urllib_parse.urlencode(params)}"
+                else:
+                    url_with_q = url
+                if method.upper() == 'GET':
+                    req = _urllib_request.Request(url_with_q, headers=headers or {}, method='GET')
+                    with _urllib_request.urlopen(req, timeout=timeout) as r:
+                        return json.loads(r.read().decode())
+                else:
+                    data = json.dumps(json_body or {}).encode('utf-8')
+                    req_headers = {**(headers or {}), 'Content-Type': 'application/json'}
+                    req = _urllib_request.Request(url_with_q, data=data, headers=req_headers, method=method.upper())
+                    with _urllib_request.urlopen(req, timeout=timeout) as r:
+                        return json.loads(r.read().decode())
+        except Exception as e:
+            last_err = e
+            log(f"Request attempt {attempt} failed for {url}: {e}", level='ERROR')
+            if attempt < retries:
+                time.sleep(backoff)
+                backoff *= 2
+            else:
+                raise
 def get_alpaca_keys():
-    """Retrieve Alpaca API keys from AWS Secrets Manager"""
+    """Retrieve Alpaca API keys from env or Secrets Manager (lazy)."""
+    api = os.environ.get('ALPACA_API_KEY')
+    secret = os.environ.get('ALPACA_SECRET_KEY')
+    if api and secret:
+        return api, secret
+    if not BOTO3_AVAILABLE:
+        raise RuntimeError('boto3 not available and ALPACA_* env vars not set')
     client = boto3.client('secretsmanager')
     secret_name = "swing-alpaca/papter-trading/keys"
     try:
         response = client.get_secret_value(SecretId=secret_name)
-        secret = json.loads(response['SecretString'])
-        return secret['ALPACA_API_KEY'], secret['ALPACA_SECRET_KEY']
+        sec = json.loads(response['SecretString'])
+        return sec['ALPACA_API_KEY'], sec['ALPACA_SECRET_KEY']
     except Exception as e:
-        print(f"Error retrieving secrets: {e}")
+        log(f"Error retrieving secrets: {e}", level='ERROR')
         raise
 
-# Initialize
-API_KEY, SECRET_KEY = get_alpaca_keys()
+# Lazy constants and getters
 TRADING_URL = os.environ.get('ALPACA_BASE_URL', 'https://paper-api.alpaca.markets')
-HEADERS = {
-    "APCA-API-KEY-ID": API_KEY,
-    "APCA-API-SECRET-KEY": SECRET_KEY
-}
-ses_client = boto3.client('ses')
-s3_client = boto3.client('s3')
-dynamodb = boto3.resource('dynamodb')
+DATA_URL = os.environ.get('ALPACA_DATA_URL', 'https://data.alpaca.markets')
 S3_BUCKET = os.environ.get('S3_BUCKET', 'swing-automation-data-processor')
+
+def get_headers():
+    api = os.environ.get('ALPACA_API_KEY')
+    secret = os.environ.get('ALPACA_SECRET_KEY')
+    if not api or not secret:
+        api, secret = get_alpaca_keys()
+    return {"APCA-API-KEY-ID": api, "APCA-API-SECRET-KEY": secret}
+
+def get_ses_client():
+    if not BOTO3_AVAILABLE:
+        return None
+    return boto3.client('ses')
+
+def get_s3_client():
+    if not BOTO3_AVAILABLE:
+        return None
+    return boto3.client('s3')
+
+def get_dynamodb_resource():
+    if not BOTO3_AVAILABLE:
+        return None
+    return boto3.resource('dynamodb')
 
 # Safety / config
 AUTO_EXECUTE = os.environ.get('AUTO_EXECUTE', 'false').lower() == 'true'
@@ -48,14 +112,20 @@ MIN_CONFIDENCE = float(os.environ.get('MIN_CONFIDENCE', '0.0'))
 DDB_TABLE = os.environ.get('WEBHOOK_IDEMPOTENCY_TABLE', 'swing-webhook-events')
 ID_TTL_SECONDS = int(os.environ.get('WEBHOOK_ID_TTL', '3600'))
 HMAC_SECRET = os.environ.get('WEBHOOK_HMAC_SECRET')  # optional
+DEBOUNCE_COUNT = int(os.environ.get('DEBOUNCE_COUNT', '2'))
+MIN_INTERVAL_SAME_SYMBOL = int(os.environ.get('MIN_INTERVAL_SAME_SYMBOL', str(30*60)))  # seconds
+MAX_TRADES_PER_DAY = int(os.environ.get('MAX_TRADES_PER_DAY', '5'))
 
-# DynamoDB table object (if exists)
-try:
-    id_table = dynamodb.Table(DDB_TABLE)
-except Exception:
-    id_table = None
+def get_id_table():
+    ddb = get_dynamodb_resource()
+    if ddb is None:
+        return None
+    try:
+        return ddb.Table(DDB_TABLE)
+    except Exception:
+        return None
 
-def place_order(symbol, side, qty=1):
+def place_order(symbol, side, qty=1, order_opts=None):
     """Place buy/sell order via Alpaca Trading API"""
     url = f"{TRADING_URL}/v2/orders"
     
@@ -63,9 +133,30 @@ def place_order(symbol, side, qty=1):
         "symbol": symbol,
         "qty": qty,
         "side": side,
+        # default to market; may be altered below
         "type": "market",
         "time_in_force": "day"
     }
+
+    # If order options present and AUTO_EXECUTE is enabled, prepare bracket or limit orders
+    if order_opts and AUTO_EXECUTE:
+        take_profit = order_opts.get('limit_price')
+        stop_loss = order_opts.get('stop_loss_price')
+        # If both provided, create a bracket order
+        if take_profit and stop_loss:
+            order_data['order_class'] = 'bracket'
+            # primary order remains market
+            order_data['type'] = 'market'
+            order_data['take_profit'] = {'limit_price': str(take_profit)}
+            order_data['stop_loss'] = {'stop_price': str(stop_loss)}
+        # If only limit is provided and side is SELL, consider limit order
+        elif take_profit and side == 'sell':
+            order_data['type'] = 'limit'
+            order_data['limit_price'] = str(take_profit)
+        # If only stop_loss provided and side is SELL, place stop order
+        elif stop_loss and side == 'sell':
+            order_data['type'] = 'stop'
+            order_data['stop_price'] = str(stop_loss)
     
     try:
         if not AUTO_EXECUTE:
@@ -73,33 +164,25 @@ def place_order(symbol, side, qty=1):
             # simulate order response
             return {"id": None, "status": "simulated", "symbol": symbol, "qty": qty, 'order_data': order_data}
 
-        # Use requests if available, otherwise urllib fallback
-        if REQUESTS_AVAILABLE:
-            response = requests.post(url, headers=HEADERS, json=order_data, timeout=30)
-            response.raise_for_status()
-            return response.json()
-        else:
-            req = _urllib_request.Request(url, data=bytes(json.dumps(order_data), 'utf-8'), headers={**HEADERS, 'Content-Type': 'application/json'}, method='POST')
-            with _urllib_request.urlopen(req, timeout=30) as r:
-                return json.loads(r.read().decode())
+        headers = get_headers()
+        try:
+            resp = _request_with_retries('POST', url, headers=headers, json_body=order_data, timeout=30, retries=3)
+            return resp
+        except Exception as exc:
+            log(f"Error placing {side} order for {symbol}: {exc}", level='ERROR')
+            return {"error": str(exc)}
     except Exception as e:
-        log(f"Error placing {side} order for {symbol}: {e}", level='ERROR')
+        log(f"Unexpected error placing order for {symbol}: {e}", level='ERROR')
         return {"error": str(e)}
 
 def get_account_buying_power():
     url = f"{TRADING_URL}/v2/account"
     try:
-        if REQUESTS_AVAILABLE:
-            response = requests.get(url, headers=HEADERS, timeout=10)
-            response.raise_for_status()
-            data = response.json()
-        else:
-            req = _urllib_request.Request(url, headers=HEADERS, method='GET')
-            with _urllib_request.urlopen(req, timeout=10) as r:
-                data = json.loads(r.read().decode())
+        headers = get_headers()
+        data = _request_with_retries('GET', url, headers=headers, timeout=10, retries=3)
         return float(data.get('buying_power', 0)), float(data.get('cash', 0))
     except Exception as e:
-        log(f"Error fetching account info: {e}", level='ERROR')
+        log(f"Error fetching account info after retries: {e}", level='ERROR')
         return 0.0, 0.0
 
 def send_webhook_email(webhook_data, trade_results):
@@ -155,15 +238,19 @@ Execution Time: {datetime.utcnow().isoformat()}
 """
     
     try:
-        ses_client.send_email(
-            Source='mhussain.myindia@gmail.com',
-            Destination={'ToAddresses': ['mhussain.myindia@gmail.com']},
-            Message={
-                'Subject': {'Data': subject},
-                'Body': {'Text': {'Data': body}}
-            }
-        )
-        print("Webhook email sent successfully")
+        ses = get_ses_client()
+        if ses is None:
+            print('SES client not available (boto3 missing). Email not sent.')
+        else:
+            ses.send_email(
+                Source='mhussain.myindia@gmail.com',
+                Destination={'ToAddresses': ['mhussain.myindia@gmail.com']},
+                Message={
+                    'Subject': {'Data': subject},
+                    'Body': {'Text': {'Data': body}}
+                }
+            )
+            print("Webhook email sent successfully")
     except Exception as e:
         print(f"Error sending webhook email: {e}")
 
@@ -179,14 +266,17 @@ def save_webhook_log(webhook_data, trade_results):
     try:
         timestamp = datetime.utcnow().strftime('%Y%m%d_%H%M%S')
         key = f"webhook-trades/{datetime.utcnow().strftime('%Y/%m')}/webhook_{timestamp}.json"
-        
-        s3_client.put_object(
-            Bucket=S3_BUCKET,
-            Key=key,
-            Body=json.dumps(log_data, indent=2),
-            ContentType='application/json'
-        )
-        print(f"Webhook log saved to S3: {key}")
+        s3 = get_s3_client()
+        if s3 is None:
+            print('S3 client not available (boto3 missing). Skipping S3 save.')
+        else:
+            s3.put_object(
+                Bucket=S3_BUCKET,
+                Key=key,
+                Body=json.dumps(log_data, indent=2),
+                ContentType='application/json'
+            )
+            print(f"Webhook log saved to S3: {key}")
     except Exception as e:
         print(f"Error saving webhook log: {e}")
 
@@ -255,12 +345,20 @@ def lambda_handler(event, context):
             return {'statusCode': 403, 'body': json.dumps({'error': 'Invalid signature'})}
     
     # Compute idempotency key (hash of payload)
-    raw_payload = json.dumps(body if 'body' in event else event, sort_keys=True)
-    event_id = hashlib.sha256(raw_payload.encode()).hexdigest()
+    # Stable event id: hash(symbol+action+qty+source) to avoid timestamp differences
+    stable_key = f"{webhook_data['symbol']}|{webhook_data['action']}|{webhook_data['qty']}|{webhook_data.get('source','') }"
+    event_id = hashlib.sha256(stable_key.encode()).hexdigest()
+
+    # Keys for additional bookkeeping in DynamoDB
+    symbol_key = f"symbol::{webhook_data['symbol']}"
+    debounce_key = f"debounce::{event_id}"
+    daily_counter_key = f"daily::{webhook_data['symbol']}::{datetime.utcnow().strftime('%Y-%m-%d')}"
 
     # Idempotency check in DynamoDB
+    id_table = get_id_table()
     if id_table is not None:
         try:
+            # Check stable dedupe
             resp = id_table.get_item(Key={'event_id': event_id})
             if 'Item' in resp:
                 log(f"Duplicate webhook event detected: {event_id}. Skipping execution.")
@@ -268,6 +366,35 @@ def lambda_handler(event, context):
                     'statusCode': 200,
                     'body': json.dumps({'message': 'Duplicate event - skipped', 'event_id': event_id})
                 }
+
+            # Check per-symbol daily limit
+            daily_resp = id_table.get_item(Key={'event_id': daily_counter_key})
+            today_count = int(daily_resp.get('Item', {}).get('count', 0)) if 'Item' in daily_resp else 0
+            if today_count >= MAX_TRADES_PER_DAY:
+                log(f"Max trades per day reached for {webhook_data['symbol']}: {today_count}", level='WARNING')
+                save_webhook_log(webhook_data, {'trades': [], 'summary': {}, 'note': 'max_trades_reached'})
+                return {'statusCode': 200, 'body': json.dumps({'message': 'Max trades per day reached'})}
+
+            # Check min interval for this symbol
+            sym_resp = id_table.get_item(Key={'event_id': symbol_key})
+            if 'Item' in sym_resp:
+                last_ts = int(sym_resp['Item'].get('last_executed_at', 0))
+                if int(time.time()) - last_ts < MIN_INTERVAL_SAME_SYMBOL:
+                    log(f"Trade for {webhook_data['symbol']} skipped: min-interval not passed", level='WARNING')
+                    save_webhook_log(webhook_data, {'trades': [], 'summary': {}, 'note': 'min_interval_not_passed'})
+                    return {'statusCode': 200, 'body': json.dumps({'message': 'Min interval not passed'})}
+
+            # Debounce logic: increment debounce counter; require DEBOUNCE_COUNT hits before execution
+            debounce_resp = id_table.get_item(Key={'event_id': debounce_key})
+            debounce_count = int(debounce_resp.get('Item', {}).get('count', 0)) if 'Item' in debounce_resp else 0
+            debounce_count += 1
+            # write/update debounce counter with TTL (short lived)
+            ttl = int(time.time()) + 300  # 5 minutes window
+            id_table.put_item(Item={'event_id': debounce_key, 'count': debounce_count, 'ttl': ttl})
+            if debounce_count < DEBOUNCE_COUNT:
+                log(f"Debounce: seen {debounce_count}/{DEBOUNCE_COUNT} for {stable_key}; waiting for more signals", level='INFO')
+                save_webhook_log(webhook_data, {'trades': [], 'summary': {}, 'note': 'debounce_waiting'})
+                return {'statusCode': 200, 'body': json.dumps({'message': 'Debounce - waiting for repeated signal', 'count': debounce_count})}
         except Exception as e:
             log(f"Error checking idempotency table: {e}", level='ERROR')
 
@@ -321,12 +448,13 @@ def lambda_handler(event, context):
     if current_price is None:
         try:
             quote_url = f"https://data.alpaca.markets/v2/stocks/{webhook_data['symbol']}/quotes/latest"
+            headers = get_headers()
             if REQUESTS_AVAILABLE:
-                r = requests.get(quote_url, headers=HEADERS, timeout=5)
+                r = requests.get(quote_url, headers=headers, timeout=5)
                 if r.status_code == 200:
                     current_price = float(r.json().get('quote', {}).get('ap', 0) or r.json().get('quote', {}).get('bp', 0))
             else:
-                req = _urllib_request.Request(quote_url, headers=HEADERS, method='GET')
+                req = _urllib_request.Request(quote_url, headers=headers, method='GET')
                 with _urllib_request.urlopen(req, timeout=5) as r:
                     data = json.loads(r.read().decode())
                     current_price = float(data.get('quote', {}).get('ap', 0) or data.get('quote', {}).get('bp', 0))
@@ -382,10 +510,17 @@ def lambda_handler(event, context):
     trades.append(trade_result)
 
     # Record idempotency entry
+    id_table = get_id_table()
     if id_table is not None:
         try:
             ttl = int(time.time()) + ID_TTL_SECONDS
             id_table.put_item(Item={'event_id': event_id, 'created_at': int(time.time()), 'ttl': ttl})
+            # update symbol last executed timestamp and daily counter
+            id_table.put_item(Item={'event_id': symbol_key, 'last_executed_at': int(time.time()), 'ttl': int(time.time()) + (24*3600)})
+            # update daily counter
+            daily_resp = id_table.get_item(Key={'event_id': daily_counter_key})
+            daily_count = int(daily_resp.get('Item', {}).get('count', 0)) if 'Item' in daily_resp else 0
+            id_table.put_item(Item={'event_id': daily_counter_key, 'count': daily_count + 1, 'ttl': int(time.time()) + (24*3600)})
         except Exception as e:
             log(f"Error writing idempotency entry: {e}", level='ERROR')
     

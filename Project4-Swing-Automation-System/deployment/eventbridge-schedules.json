@@ -1,0 +1,24 @@
+{
+  "Version": "2012-10-17",
+  "Description": "EventBridge rules for hybrid schedule",
+  "Rules": [
+    {
+      "Name": "swing-lightcheck-15m",
+      "ScheduleExpression": "cron(0/15 14-20 ? * MON-FRI *)",
+      "State": "ENABLED",
+      "Description": "Lightweight checks every 15 minutes during market hours UTC 14-20",
+      "Targets": [
+  {"Arn": "arn:aws:lambda:us-east-1:206055866143:function:swing-sentiment-enhanced-lambda", "Id": "target1"}
+      ]
+    },
+    {
+      "Name": "swing-daily-heavy",
+      "ScheduleExpression": "cron(45 13 ? * MON-FRI *)",
+      "State": "ENABLED",
+      "Description": "Daily heavy analysis 13:45 UTC (~9:45am Toronto ET depending DST)",
+      "Targets": [
+  {"Arn": "arn:aws:lambda:us-east-1:206055866143:function:swing-sentiment-enhanced-lambda", "Id": "target2"}
+      ]
+    }
+  ]
+}

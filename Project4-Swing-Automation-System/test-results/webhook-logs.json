@@ -1,0 +1,811 @@
+﻿{
+    "events": [
+        {
+            "logStreamName": "2025/10/13/[$LATEST]ec39428430d44c649e02a7a7d6115d87",
+            "timestamp": 1760373277189,
+            "message": "INIT_START Runtime Version: python:3.13.v63\tRuntime Version ARN: arn:aws:lambda:us-east-1::runtime:6e38c6392184a42a11f69b8b07e902e6615b10d7a884c3e3cbd4d0b8a5e42c07\n",
+            "ingestionTime": 1760373277404,
+            "eventId": "39257635908894209489167715669134419930682745741901561856"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]ec39428430d44c649e02a7a7d6115d87",
+            "timestamp": 1760373277296,
+            "message": "[WARNING]\t2025-10-13T16:34:37.296Z\t\tLAMBDA_WARNING: Unhandled exception. The most likely cause is an issue in the function code. However, in rare cases, a Lambda runtime update can cause unexpected function behavior. For functions using managed runtimes, runtime updates can be triggered by a function change, or can be applied automatically. To determine if the runtime has been updated, check the runtime version in the INIT_START log entry. If this error correlates with a change in the runtime version, you may be able to mitigate this error by temporarily rolling back to the previous runtime version. For more information, see https://docs.aws.amazon.com/lambda/latest/dg/runtimes-update.html\r\n",
+            "ingestionTime": 1760373277404,
+            "eventId": "39257635911280389225410492345278741785856120423041466369"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]ec39428430d44c649e02a7a7d6115d87",
+            "timestamp": 1760373277296,
+            "message": "[ERROR] Runtime.UserCodeSyntaxError: Syntax error in module 'webhook-trading': expected 'except' or 'finally' block (webhook-trading.py, line 222)\nTraceback (most recent call last):\nááFile \"/var/task/webhook-trading.py\" Line 222\náááááááálog(f\"Parsed webhook data: {webhook_data}\")",
+            "ingestionTime": 1760373277404,
+            "eventId": "39257635911280389225410492345278741785856120423041466370"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]ec39428430d44c649e02a7a7d6115d87",
+            "timestamp": 1760373277348,
+            "message": "INIT_REPORT Init Duration: 158.82 ms\tPhase: init\tStatus: error\tError Type: Runtime.UserCodeSyntaxError\n",
+            "ingestionTime": 1760373277441,
+            "eventId": "39257635912440027975734084748683618481726658458692550656"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]ec39428430d44c649e02a7a7d6115d87",
+            "timestamp": 1760373277421,
+            "message": "[WARNING]\t2025-10-13T16:34:37.421Z\t\tLAMBDA_WARNING: Unhandled exception. The most likely cause is an issue in the function code. However, in rare cases, a Lambda runtime update can cause unexpected function behavior. For functions using managed runtimes, runtime updates can be triggered by a function change, or can be applied automatically. To determine if the runtime has been updated, check the runtime version in the INIT_START log entry. If this error correlates with a change in the runtime version, you may be able to mitigate this error by temporarily rolling back to the previous runtime version. For more information, see https://docs.aws.amazon.com/lambda/latest/dg/runtimes-update.html\r\n",
+            "ingestionTime": 1760373277441,
+            "eventId": "39257635914067982375226820238015725915629988848629121025"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]ec39428430d44c649e02a7a7d6115d87",
+            "timestamp": 1760373277421,
+            "message": "[ERROR] Runtime.UserCodeSyntaxError: Syntax error in module 'webhook-trading': expected 'except' or 'finally' block (webhook-trading.py, line 222)\nTraceback (most recent call last):\nááFile \"/var/task/webhook-trading.py\" Line 222\náááááááálog(f\"Parsed webhook data: {webhook_data}\")",
+            "ingestionTime": 1760373277441,
+            "eventId": "39257635914067982375226820238015725915629988848629121026"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]ec39428430d44c649e02a7a7d6115d87",
+            "timestamp": 1760373277458,
+            "message": "INIT_REPORT Init Duration: 96.22 ms\tPhase: invoke\tStatus: error\tError Type: Runtime.UserCodeSyntaxError\n",
+            "ingestionTime": 1760373286476,
+            "eventId": "39257635914893109947572453305175232995716847638749970432"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]ec39428430d44c649e02a7a7d6115d87",
+            "timestamp": 1760373277458,
+            "message": "START RequestId: 61ee8115-ac84-4e16-a0e9-fc3aa01fc44f Version: $LATEST\n",
+            "ingestionTime": 1760373286476,
+            "eventId": "39257635914893109947572453305175232995716847638749970433"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]ec39428430d44c649e02a7a7d6115d87",
+            "timestamp": 1760373277463,
+            "message": "END RequestId: 61ee8115-ac84-4e16-a0e9-fc3aa01fc44f\n",
+            "ingestionTime": 1760373286476,
+            "eventId": "39257635915004613673565106420882911587080089446279872514"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]ec39428430d44c649e02a7a7d6115d87",
+            "timestamp": 1760373277464,
+            "message": "REPORT RequestId: 61ee8115-ac84-4e16-a0e9-fc3aa01fc44f\tDuration: 108.93 ms\tBilled Duration: 109 ms\tMemory Size: 256 MB\tMax Memory Used: 46 MB\tStatus: error\tError Type: Runtime.UserCodeSyntaxError\n",
+            "ingestionTime": 1760373286476,
+            "eventId": "39257635915026914418763637044024447305352737807785852931"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]88618b455f0d48dd82473315af2c5754",
+            "timestamp": 1760373493473,
+            "message": "INIT_START Runtime Version: python:3.13.v63\tRuntime Version ARN: arn:aws:lambda:us-east-1::runtime:6e38c6392184a42a11f69b8b07e902e6615b10d7a884c3e3cbd4d0b8a5e42c07\n",
+            "ingestionTime": 1760373493881,
+            "eventId": "39257640732188584008165011474750624768707044953118474240"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]88618b455f0d48dd82473315af2c5754",
+            "timestamp": 1760373493819,
+            "message": "[WARNING]\t2025-10-13T16:38:13.819Z\t\tLAMBDA_WARNING: Unhandled exception. The most likely cause is an issue in the function code. However, in rare cases, a Lambda runtime update can cause unexpected function behavior. For functions using managed runtimes, runtime updates can be triggered by a function change, or can be applied automatically. To determine if the runtime has been updated, check the runtime version in the INIT_START log entry. If this error correlates with a change in the runtime version, you may be able to mitigate this error by temporarily rolling back to the previous runtime version. For more information, see https://docs.aws.amazon.com/lambda/latest/dg/runtimes-update.html\r\n",
+            "ingestionTime": 1760373493881,
+            "eventId": "39257640739904641846856607081721983291043378034187698177"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]88618b455f0d48dd82473315af2c5754",
+            "timestamp": 1760373493819,
+            "message": "[ERROR] Runtime.ImportModuleError: Unable to import module 'webhook-trading': No module named 'requests'\nTraceback (most recent call last):",
+            "ingestionTime": 1760373493881,
+            "eventId": "39257640739904641846856607081721983291043378034187698178"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]88618b455f0d48dd82473315af2c5754",
+            "timestamp": 1760373493864,
+            "message": "INIT_REPORT Init Duration: 390.44 ms\tPhase: init\tStatus: error\tError Type: Runtime.ImportModuleError\n",
+            "ingestionTime": 1760373493920,
+            "eventId": "39257640740908175380790485123138205441613182297487114240"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]88618b455f0d48dd82473315af2c5754",
+            "timestamp": 1760373494085,
+            "message": "[WARNING]\t2025-10-13T16:38:14.085Z\t\tLAMBDA_WARNING: Unhandled exception. The most likely cause is an issue in the function code. However, in rare cases, a Lambda runtime update can cause unexpected function behavior. For functions using managed runtimes, runtime updates can be triggered by a function change, or can be applied automatically. To determine if the runtime has been updated, check the runtime version in the INIT_START log entry. If this error correlates with a change in the runtime version, you may be able to mitigate this error by temporarily rolling back to the previous runtime version. For more information, see https://docs.aws.amazon.com/lambda/latest/dg/runtimes-update.html\r\n",
+            "ingestionTime": 1760373494090,
+            "eventId": "39257640745836640069665752837622846128931047849414754304"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]88618b455f0d48dd82473315af2c5754",
+            "timestamp": 1760373494085,
+            "message": "[ERROR] Runtime.ImportModuleError: Unable to import module 'webhook-trading': No module named 'requests'\nTraceback (most recent call last):",
+            "ingestionTime": 1760373494090,
+            "eventId": "39257640745836640069665752837622846128931047849414754305"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]88618b455f0d48dd82473315af2c5754",
+            "timestamp": 1760373494127,
+            "message": "INIT_REPORT Init Duration: 251.58 ms\tPhase: invoke\tStatus: error\tError Type: Runtime.ImportModuleError\n",
+            "ingestionTime": 1760373503144,
+            "eventId": "39257640746773271368004039020513302736218605774337277952"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]88618b455f0d48dd82473315af2c5754",
+            "timestamp": 1760373494127,
+            "message": "START RequestId: 01ade896-8113-4746-8b15-89a1b0e8788a Version: $LATEST\n",
+            "ingestionTime": 1760373503144,
+            "eventId": "39257640746773271368004039020513302736218605774337277953"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]88618b455f0d48dd82473315af2c5754",
+            "timestamp": 1760373494131,
+            "message": "END RequestId: 01ade896-8113-4746-8b15-89a1b0e8788a\n",
+            "ingestionTime": 1760373503144,
+            "eventId": "39257640746862474348798161513079445609309199220361199618"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]88618b455f0d48dd82473315af2c5754",
+            "timestamp": 1760373494131,
+            "message": "REPORT RequestId: 01ade896-8113-4746-8b15-89a1b0e8788a\tDuration: 261.31 ms\tBilled Duration: 262 ms\tMemory Size: 256 MB\tMax Memory Used: 67 MB\tStatus: error\tError Type: Runtime.ImportModuleError\n",
+            "ingestionTime": 1760373503144,
+            "eventId": "39257640746862474348798161513079445609309199220361199619"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]2ab07be33d58480a88c6968172d74225",
+            "timestamp": 1760373550693,
+            "message": "INIT_START Runtime Version: python:3.13.v63\tRuntime Version ARN: arn:aws:lambda:us-east-1::runtime:6e38c6392184a42a11f69b8b07e902e6615b10d7a884c3e3cbd4d0b8a5e42c07\n",
+            "ingestionTime": 1760373558602,
+            "eventId": "39257642008237224268087267711667000019727563164673376256"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]2ab07be33d58480a88c6968172d74225",
+            "timestamp": 1760373551420,
+            "message": "START RequestId: fa9331f4-5458-44b8-89b6-0cd5f1b50297 Version: $LATEST\n",
+            "ingestionTime": 1760373558602,
+            "eventId": "39257642024449866027419030735563467203942921979521138689"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]2ab07be33d58480a88c6968172d74225",
+            "timestamp": 1760373551421,
+            "message": "2025-10-13 16:39:11 UTC [INFO] Webhook Trading Lambda started\n",
+            "ingestionTime": 1760373558602,
+            "eventId": "39257642024472166772617561358705002922215570341027119106"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]2ab07be33d58480a88c6968172d74225",
+            "timestamp": 1760373551421,
+            "message": "2025-10-13 16:39:11 UTC [INFO] Event: {\"symbol\": \"AAPL\", \"action\": \"BUY\", \"qty\": 1, \"source\": \"newsapi\", \"confidence\": 0.85}\n",
+            "ingestionTime": 1760373558602,
+            "eventId": "39257642024472166772617561358705002922215570341027119107"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]2ab07be33d58480a88c6968172d74225",
+            "timestamp": 1760373551421,
+            "message": "2025-10-13 16:39:11 UTC [INFO] Parsed webhook data: {'symbol': 'AAPL', 'action': 'BUY', 'qty': 1, 'source': 'newsapi', 'timestamp': '2025-10-13T16:39:11.421295'}\n",
+            "ingestionTime": 1760373558602,
+            "eventId": "39257642024472166772617561358705002922215570341027119108"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]2ab07be33d58480a88c6968172d74225",
+            "timestamp": 1760373551517,
+            "message": "2025-10-13 16:39:11 UTC [ERROR] Error checking idempotency table: An error occurred (AccessDeniedException) when calling the GetItem operation: User: arn:aws:sts::206055866143:assumed-role/swing-automation-lamba-role/swing-webhook-trading is not authorized to perform: dynamodb:GetItem on resource: arn:aws:dynamodb:us-east-1:206055866143:table/swing-webhook-events because no identity-based policy allows the dynamodb:GetItem action\n",
+            "ingestionTime": 1760373558602,
+            "eventId": "39257642026613038311676501180292431876389813045601239045"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]2ab07be33d58480a88c6968172d74225",
+            "timestamp": 1760373551517,
+            "message": "2025-10-13 16:39:11 UTC [INFO] Preparing to execute BUY order for AAPL\n",
+            "ingestionTime": 1760373558602,
+            "eventId": "39257642026613038311676501180292431876389813045601239046"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]2ab07be33d58480a88c6968172d74225",
+            "timestamp": 1760373551707,
+            "message": "2025-10-13 16:39:11 UTC [INFO] AUTO_EXECUTE is false; skipping real order for AAPL buy 1\n",
+            "ingestionTime": 1760373558602,
+            "eventId": "39257642030850179899397319577184218348193001731737518087"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]2ab07be33d58480a88c6968172d74225",
+            "timestamp": 1760373551723,
+            "message": "2025-10-13 16:39:11 UTC [ERROR] Error writing idempotency entry: An error occurred (AccessDeniedException) when calling the PutItem operation: User: arn:aws:sts::206055866143:assumed-role/swing-automation-lamba-role/swing-webhook-trading is not authorized to perform: dynamodb:PutItem on resource: arn:aws:dynamodb:us-east-1:206055866143:table/swing-webhook-events because no identity-based policy allows the dynamodb:PutItem action\n",
+            "ingestionTime": 1760373558602,
+            "eventId": "39257642031206991822573809547448789840555375515833204744"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]2ab07be33d58480a88c6968172d74225",
+            "timestamp": 1760373551862,
+            "message": "Webhook log saved to S3: webhook-trades/2025/10/webhook_20251013_163911.json\n",
+            "ingestionTime": 1760373558602,
+            "eventId": "39257642034306795405169566164122254680453497765164482569"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]2ab07be33d58480a88c6968172d74225",
+            "timestamp": 1760373552047,
+            "message": "Webhook email sent successfully\n",
+            "ingestionTime": 1760373558602,
+            "eventId": "39257642038432433266897731445306362560893444643770859530"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]2ab07be33d58480a88c6968172d74225",
+            "timestamp": 1760373552049,
+            "message": "END RequestId: fa9331f4-5458-44b8-89b6-0cd5f1b50297\n",
+            "ingestionTime": 1760373558602,
+            "eventId": "39257642038477034757294792691589433997438741366782820363"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]2ab07be33d58480a88c6968172d74225",
+            "timestamp": 1760373552049,
+            "message": "REPORT RequestId: fa9331f4-5458-44b8-89b6-0cd5f1b50297\tDuration: 628.62 ms\tBilled Duration: 1352 ms\tMemory Size: 256 MB\tMax Memory Used: 100 MB\tInit Duration: 722.74 ms\t\n",
+            "ingestionTime": 1760373558602,
+            "eventId": "39257642038477034757294792691589433997438741366782820364"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]c569e3a71cb44329bf8a18d75b80a611",
+            "timestamp": 1760374292531,
+            "message": "INIT_START Runtime Version: python:3.13.v63\tRuntime Version ARN: arn:aws:lambda:us-east-1::runtime:6e38c6392184a42a11f69b8b07e902e6615b10d7a884c3e3cbd4d0b8a5e42c07\n",
+            "ingestionTime": 1760374293014,
+            "eventId": "39257658551777440855647678670091096535251217566755651584"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]c569e3a71cb44329bf8a18d75b80a611",
+            "timestamp": 1760374293216,
+            "message": "START RequestId: 05a2844e-86d2-44ee-9892-119fa55e5d3f Version: $LATEST\n",
+            "ingestionTime": 1760374302228,
+            "eventId": "39257658567053451316641155533181819496151901187477667840"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]c569e3a71cb44329bf8a18d75b80a611",
+            "timestamp": 1760374293216,
+            "message": "2025-10-13 16:51:33 UTC [INFO] Webhook Trading Lambda started\n",
+            "ingestionTime": 1760374302228,
+            "eventId": "39257658567053451316641155533181819496151901187477667841"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]c569e3a71cb44329bf8a18d75b80a611",
+            "timestamp": 1760374293216,
+            "message": "2025-10-13 16:51:33 UTC [INFO] Event: {\"symbol\": \"AAPL\", \"action\": \"BUY\", \"qty\": 1, \"source\": \"newsapi\", \"confidence\": 0.85}\n",
+            "ingestionTime": 1760374302228,
+            "eventId": "39257658567053451316641155533181819496151901187477667842"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]c569e3a71cb44329bf8a18d75b80a611",
+            "timestamp": 1760374293216,
+            "message": "2025-10-13 16:51:33 UTC [INFO] Parsed webhook data: {'symbol': 'AAPL', 'action': 'BUY', 'qty': 1, 'source': 'newsapi', 'timestamp': '2025-10-13T16:51:33.216850'}\n",
+            "ingestionTime": 1760374302228,
+            "eventId": "39257658567053451316641155533181819496151901187477667843"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]c569e3a71cb44329bf8a18d75b80a611",
+            "timestamp": 1760374293299,
+            "message": "2025-10-13 16:51:33 UTC [ERROR] Error checking idempotency table: An error occurred (AccessDeniedException) when calling the GetItem operation: User: arn:aws:sts::206055866143:assumed-role/swing-automation-lamba-role/swing-webhook-trading is not authorized to perform: dynamodb:GetItem on resource: arn:aws:dynamodb:us-east-1:206055866143:table/swing-webhook-events because no identity-based policy allows the dynamodb:GetItem action\n",
+            "ingestionTime": 1760374302228,
+            "eventId": "39257658568904413168119197253929284112781715192474042372"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]c569e3a71cb44329bf8a18d75b80a611",
+            "timestamp": 1760374293299,
+            "message": "2025-10-13 16:51:33 UTC [INFO] Preparing to execute BUY order for AAPL\n",
+            "ingestionTime": 1760374302228,
+            "eventId": "39257658568904413168119197253929284112781715192474042373"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]c569e3a71cb44329bf8a18d75b80a611",
+            "timestamp": 1760374293472,
+            "message": "2025-10-13 16:51:33 UTC [INFO] AUTO_EXECUTE is false; skipping real order for AAPL buy 1\n",
+            "ingestionTime": 1760374302228,
+            "eventId": "39257658572762442087464995057414963373949881733008654342"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]c569e3a71cb44329bf8a18d75b80a611",
+            "timestamp": 1760374293488,
+            "message": "2025-10-13 16:51:33 UTC [ERROR] Error writing idempotency entry: An error occurred (AccessDeniedException) when calling the PutItem operation: User: arn:aws:sts::206055866143:assumed-role/swing-automation-lamba-role/swing-webhook-trading is not authorized to perform: dynamodb:PutItem on resource: arn:aws:dynamodb:us-east-1:206055866143:table/swing-webhook-events because no identity-based policy allows the dynamodb:PutItem action\n",
+            "ingestionTime": 1760374302228,
+            "eventId": "39257658573119254010641485027679534866312255517104340999"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]c569e3a71cb44329bf8a18d75b80a611",
+            "timestamp": 1760374293649,
+            "message": "Webhook log saved to S3: webhook-trades/2025/10/webhook_20251013_165133.json\n",
+            "ingestionTime": 1760374302228,
+            "eventId": "39257658576709673987604915353466785508208641719567187976"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]c569e3a71cb44329bf8a18d75b80a611",
+            "timestamp": 1760374293833,
+            "message": "Webhook email sent successfully\n",
+            "ingestionTime": 1760374302228,
+            "eventId": "39257658580813011104134550011509357670375940236667584521"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]c569e3a71cb44329bf8a18d75b80a611",
+            "timestamp": 1760374293835,
+            "message": "END RequestId: 05a2844e-86d2-44ee-9892-119fa55e5d3f\n",
+            "ingestionTime": 1760374302228,
+            "eventId": "39257658580857612594531611257792429106921236959679545354"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]c569e3a71cb44329bf8a18d75b80a611",
+            "timestamp": 1760374293835,
+            "message": "REPORT RequestId: 05a2844e-86d2-44ee-9892-119fa55e5d3f\tDuration: 618.71 ms\tBilled Duration: 1301 ms\tMemory Size: 256 MB\tMax Memory Used: 100 MB\tInit Duration: 681.30 ms\t\n",
+            "ingestionTime": 1760374302228,
+            "eventId": "39257658580857612594531611257792429106921236959679545355"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]c569e3a71cb44329bf8a18d75b80a611",
+            "timestamp": 1760374295844,
+            "message": "START RequestId: 7deb2e7a-a0fa-400f-88e1-11e177612102 Version: $LATEST\n",
+            "ingestionTime": 1760374302228,
+            "eventId": "39257658625659809698379633149137687116671795225194201100"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]c569e3a71cb44329bf8a18d75b80a611",
+            "timestamp": 1760374295844,
+            "message": "2025-10-13 16:51:35 UTC [INFO] Webhook Trading Lambda started\n",
+            "ingestionTime": 1760374302228,
+            "eventId": "39257658625659809698379633149137687116671795225194201101"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]c569e3a71cb44329bf8a18d75b80a611",
+            "timestamp": 1760374295844,
+            "message": "2025-10-13 16:51:35 UTC [INFO] Event: {\"symbol\": \"AAPL\", \"action\": \"BUY\", \"qty\": 1, \"source\": \"newsapi\", \"confidence\": 0.85}\n",
+            "ingestionTime": 1760374302228,
+            "eventId": "39257658625659809698379633149137687116671795225194201102"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]c569e3a71cb44329bf8a18d75b80a611",
+            "timestamp": 1760374295844,
+            "message": "2025-10-13 16:51:35 UTC [INFO] Parsed webhook data: {'symbol': 'AAPL', 'action': 'BUY', 'qty': 1, 'source': 'newsapi', 'timestamp': '2025-10-13T16:51:35.844682'}\n",
+            "ingestionTime": 1760374302228,
+            "eventId": "39257658625659809698379633149137687116671795225194201103"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]c569e3a71cb44329bf8a18d75b80a611",
+            "timestamp": 1760374295852,
+            "message": "2025-10-13 16:51:35 UTC [ERROR] Error checking idempotency table: An error occurred (AccessDeniedException) when calling the GetItem operation: User: arn:aws:sts::206055866143:assumed-role/swing-automation-lamba-role/swing-webhook-trading is not authorized to perform: dynamodb:GetItem on resource: arn:aws:dynamodb:us-east-1:206055866143:table/swing-webhook-events because no identity-based policy allows the dynamodb:GetItem action\n",
+            "ingestionTime": 1760374302228,
+            "eventId": "39257658625838215659967878134269972862852982117242044432"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]c569e3a71cb44329bf8a18d75b80a611",
+            "timestamp": 1760374295852,
+            "message": "2025-10-13 16:51:35 UTC [INFO] Preparing to execute BUY order for AAPL\n",
+            "ingestionTime": 1760374302228,
+            "eventId": "39257658625838215659967878134269972862852982117242044433"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]c569e3a71cb44329bf8a18d75b80a611",
+            "timestamp": 1760374295884,
+            "message": "2025-10-13 16:51:35 UTC [INFO] AUTO_EXECUTE is false; skipping real order for AAPL buy 1\n",
+            "ingestionTime": 1760374302228,
+            "eventId": "39257658626551839506320858074799115847577729685433417746"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]c569e3a71cb44329bf8a18d75b80a611",
+            "timestamp": 1760374295894,
+            "message": "2025-10-13 16:51:35 UTC [ERROR] Error writing idempotency entry: An error occurred (AccessDeniedException) when calling the PutItem operation: User: arn:aws:sts::206055866143:assumed-role/swing-automation-lamba-role/swing-webhook-trading is not authorized to perform: dynamodb:PutItem on resource: arn:aws:dynamodb:us-east-1:206055866143:table/swing-webhook-events because no identity-based policy allows the dynamodb:PutItem action\n",
+            "ingestionTime": 1760374302228,
+            "eventId": "39257658626774846958306164306214473030304213300493221907"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]c569e3a71cb44329bf8a18d75b80a611",
+            "timestamp": 1760374295954,
+            "message": "Webhook log saved to S3: webhook-trades/2025/10/webhook_20251013_165135.json\n",
+            "ingestionTime": 1760374302228,
+            "eventId": "39257658628112891670218001694706616126663114990852046868"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]c569e3a71cb44329bf8a18d75b80a611",
+            "timestamp": 1760374296079,
+            "message": "Webhook email sent successfully\n",
+            "ingestionTime": 1760374302228,
+            "eventId": "39257658630900484820034329587398580910744160179099598869"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]c569e3a71cb44329bf8a18d75b80a611",
+            "timestamp": 1760374296081,
+            "message": "END RequestId: 7deb2e7a-a0fa-400f-88e1-11e177612102\n",
+            "ingestionTime": 1760374302228,
+            "eventId": "39257658630945086310431390833681652347289456902111559702"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]c569e3a71cb44329bf8a18d75b80a611",
+            "timestamp": 1760374296081,
+            "message": "REPORT RequestId: 7deb2e7a-a0fa-400f-88e1-11e177612102\tDuration: 236.78 ms\tBilled Duration: 237 ms\tMemory Size: 256 MB\tMax Memory Used: 100 MB\t\n",
+            "ingestionTime": 1760374302228,
+            "eventId": "39257658630945086310431390833681652347289456902111559703"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]773a002c03784e35bbe55fab623bd0cb",
+            "timestamp": 1760374911540,
+            "message": "INIT_START Runtime Version: python:3.13.v63\tRuntime Version ARN: arn:aws:lambda:us-east-1::runtime:6e38c6392184a42a11f69b8b07e902e6615b10d7a884c3e3cbd4d0b8a5e42c07\n",
+            "ingestionTime": 1760374919160,
+            "eventId": "39257672356139425452890179645938540023842023272783478784"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]773a002c03784e35bbe55fab623bd0cb",
+            "timestamp": 1760374912251,
+            "message": "START RequestId: 1759f889-edf2-4f54-960d-20eee987fc25 Version: $LATEST\n",
+            "ingestionTime": 1760374919160,
+            "eventId": "39257672371995255289045452699570435715695008303535554561"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]773a002c03784e35bbe55fab623bd0cb",
+            "timestamp": 1760374912252,
+            "message": "2025-10-13 17:01:52 UTC [INFO] Webhook Trading Lambda started\n",
+            "ingestionTime": 1760374919160,
+            "eventId": "39257672372017556034243983322711971433967656665041534978"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]773a002c03784e35bbe55fab623bd0cb",
+            "timestamp": 1760374912252,
+            "message": "2025-10-13 17:01:52 UTC [INFO] Event: {\"symbol\": \"AAPL\", \"action\": \"BUY\", \"qty\": 1, \"source\": \"newsapi\", \"confidence\": 0.9, \"stop_loss_pct\": 2.0, \"limit_pct\": 1.0}\n",
+            "ingestionTime": 1760374919160,
+            "eventId": "39257672372017556034243983322711971433967656665041534979"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]773a002c03784e35bbe55fab623bd0cb",
+            "timestamp": 1760374912252,
+            "message": "2025-10-13 17:01:52 UTC [INFO] Parsed webhook data: {'symbol': 'AAPL', 'action': 'BUY', 'qty': 1, 'source': 'newsapi', 'timestamp': '2025-10-13T17:01:52.252266'}\n",
+            "ingestionTime": 1760374919160,
+            "eventId": "39257672372017556034243983322711971433967656665041534980"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]773a002c03784e35bbe55fab623bd0cb",
+            "timestamp": 1760374912336,
+            "message": "2025-10-13 17:01:52 UTC [INFO] Preparing to execute BUY order for AAPL\n",
+            "ingestionTime": 1760374919160,
+            "eventId": "39257672373890818630920555666600971768870119031543889925"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]773a002c03784e35bbe55fab623bd0cb",
+            "timestamp": 1760374912527,
+            "message": "2025-10-13 17:01:52 UTC [INFO] AUTO_EXECUTE is false; skipping real order for AAPL buy 1\n",
+            "ingestionTime": 1760374919160,
+            "eventId": "39257672378150260963839904686634293958945956079186149382"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]773a002c03784e35bbe55fab623bd0cb",
+            "timestamp": 1760374912685,
+            "message": "Webhook log saved to S3: webhook-trades/2025/10/webhook_20251013_170152.json\n",
+            "ingestionTime": 1760374919160,
+            "eventId": "39257672381673778705207743142996937446024397197131055111"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]773a002c03784e35bbe55fab623bd0cb",
+            "timestamp": 1760374912863,
+            "message": "Webhook email sent successfully\n",
+            "ingestionTime": 1760374919160,
+            "eventId": "39257672385643311350546194062190295298555805545195569160"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]773a002c03784e35bbe55fab623bd0cb",
+            "timestamp": 1760374912865,
+            "message": "END RequestId: 1759f889-edf2-4f54-960d-20eee987fc25\n",
+            "ingestionTime": 1760374919160,
+            "eventId": "39257672385687912840943255308473366735101102268207529993"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]773a002c03784e35bbe55fab623bd0cb",
+            "timestamp": 1760374912865,
+            "message": "REPORT RequestId: 1759f889-edf2-4f54-960d-20eee987fc25\tDuration: 613.78 ms\tBilled Duration: 1321 ms\tMemory Size: 256 MB\tMax Memory Used: 100 MB\tInit Duration: 707.07 ms\t\n",
+            "ingestionTime": 1760374919160,
+            "eventId": "39257672385687912840943255308473366735101102268207529994"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]6244d02a63c641e195687042e365eeb9",
+            "timestamp": 1760375207075,
+            "message": "INIT_START Runtime Version: python:3.13.v63\tRuntime Version ARN: arn:aws:lambda:us-east-1::runtime:6e38c6392184a42a11f69b8b07e902e6615b10d7a884c3e3cbd4d0b8a5e42c07\n",
+            "ingestionTime": 1760375211336,
+            "eventId": "39257678946790157700637890132916284073478491066389692416"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]6244d02a63c641e195687042e365eeb9",
+            "timestamp": 1760375207858,
+            "message": "START RequestId: 3ea162f4-cd18-47bf-a25e-751cc1c3a774 Version: $LATEST\n",
+            "ingestionTime": 1760375211336,
+            "eventId": "39257678964251641191087368052738751480962158125572358145"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]6244d02a63c641e195687042e365eeb9",
+            "timestamp": 1760375207859,
+            "message": "2025-10-13 17:06:47 UTC [INFO] Webhook Trading Lambda started\n",
+            "ingestionTime": 1760375211336,
+            "eventId": "39257678964273941936285898675880287199234806487078338562"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]6244d02a63c641e195687042e365eeb9",
+            "timestamp": 1760375207859,
+            "message": "2025-10-13 17:06:47 UTC [INFO] Event: {\"symbol\": \"AAPL\", \"action\": \"BUY\", \"qty\": 1, \"source\": \"newsapi\", \"confidence\": 0.9, \"stop_loss_pct\": 2.0, \"limit_pct\": 1.0}\n",
+            "ingestionTime": 1760375211336,
+            "eventId": "39257678964273941936285898675880287199234806487078338563"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]6244d02a63c641e195687042e365eeb9",
+            "timestamp": 1760375207859,
+            "message": "2025-10-13 17:06:47 UTC [INFO] Parsed webhook data: {'symbol': 'AAPL', 'action': 'BUY', 'qty': 1, 'source': 'newsapi', 'timestamp': '2025-10-13T17:06:47.859627'}\n",
+            "ingestionTime": 1760375211336,
+            "eventId": "39257678964273941936285898675880287199234806487078338564"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]6244d02a63c641e195687042e365eeb9",
+            "timestamp": 1760375208004,
+            "message": "2025-10-13 17:06:48 UTC [INFO] Debounce: seen 1/2 for AAPL|BUY|1|newsapi; waiting for more signals\n",
+            "ingestionTime": 1760375211336,
+            "eventId": "39257678967507549990072839031402966348768818905445498885"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]6244d02a63c641e195687042e365eeb9",
+            "timestamp": 1760375208175,
+            "message": "Webhook log saved to S3: webhook-trades/2025/10/webhook_20251013_170648.json\n",
+            "ingestionTime": 1760375211336,
+            "eventId": "39257678971320977419021575588605574173391688722968150022"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]6244d02a63c641e195687042e365eeb9",
+            "timestamp": 1760375208177,
+            "message": "END RequestId: 3ea162f4-cd18-47bf-a25e-751cc1c3a774\n",
+            "ingestionTime": 1760375211336,
+            "eventId": "39257678971365578909418636834888645609936985445980110855"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]6244d02a63c641e195687042e365eeb9",
+            "timestamp": 1760375208177,
+            "message": "REPORT RequestId: 3ea162f4-cd18-47bf-a25e-751cc1c3a774\tDuration: 318.09 ms\tBilled Duration: 1098 ms\tMemory Size: 256 MB\tMax Memory Used: 98 MB\tInit Duration: 779.60 ms\t\n",
+            "ingestionTime": 1760375211336,
+            "eventId": "39257678971365578909418636834888645609936985445980110856"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]6244d02a63c641e195687042e365eeb9",
+            "timestamp": 1760375210219,
+            "message": "START RequestId: 3d353d99-36fb-44ff-aa81-d33c33b563c7 Version: $LATEST\n",
+            "ingestionTime": 1760375211336,
+            "eventId": "39257679016903700604818169289904582322684939641192120329"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]6244d02a63c641e195687042e365eeb9",
+            "timestamp": 1760375210219,
+            "message": "2025-10-13 17:06:50 UTC [INFO] Webhook Trading Lambda started\n",
+            "ingestionTime": 1760375211336,
+            "eventId": "39257679016903700604818169289904582322684939641192120330"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]6244d02a63c641e195687042e365eeb9",
+            "timestamp": 1760375210220,
+            "message": "2025-10-13 17:06:50 UTC [INFO] Event: {\"symbol\": \"AAPL\", \"action\": \"BUY\", \"qty\": 1, \"source\": \"newsapi\", \"confidence\": 0.9, \"stop_loss_pct\": 2.0, \"limit_pct\": 1.0}\n",
+            "ingestionTime": 1760375211336,
+            "eventId": "39257679016926001350016699913046118040957588002698100747"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]6244d02a63c641e195687042e365eeb9",
+            "timestamp": 1760375210220,
+            "message": "2025-10-13 17:06:50 UTC [INFO] Parsed webhook data: {'symbol': 'AAPL', 'action': 'BUY', 'qty': 1, 'source': 'newsapi', 'timestamp': '2025-10-13T17:06:50.220047'}\n",
+            "ingestionTime": 1760375211336,
+            "eventId": "39257679016926001350016699913046118040957588002698100748"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]6244d02a63c641e195687042e365eeb9",
+            "timestamp": 1760375210271,
+            "message": "2025-10-13 17:06:50 UTC [INFO] Preparing to execute BUY order for AAPL\n",
+            "ingestionTime": 1760375211336,
+            "eventId": "39257679018063339355141761693264439672862654439503101965"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]6244d02a63c641e195687042e365eeb9",
+            "timestamp": 1760375210464,
+            "message": "2025-10-13 17:06:50 UTC [INFO] AUTO_EXECUTE is false; skipping real order for AAPL buy 1\n",
+            "ingestionTime": 1760375211336,
+            "eventId": "39257679022367383178458171959580833299483788210157322254"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]6244d02a63c641e195687042e365eeb9",
+            "timestamp": 1760375210563,
+            "message": "Webhook log saved to S3: webhook-trades/2025/10/webhook_20251013_170650.json\n",
+            "ingestionTime": 1760375211336,
+            "eventId": "39257679024575156953112703650592869408475975999249383439"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]6244d02a63c641e195687042e365eeb9",
+            "timestamp": 1760375210736,
+            "message": "Webhook email sent successfully\n",
+            "ingestionTime": 1760375211336,
+            "eventId": "39257679028433185872458501454078548669644142539783995408"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]6244d02a63c641e195687042e365eeb9",
+            "timestamp": 1760375210738,
+            "message": "END RequestId: 3d353d99-36fb-44ff-aa81-d33c33b563c7\n",
+            "ingestionTime": 1760375211336,
+            "eventId": "39257679028477787362855562700361620106189439262795956241"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]6244d02a63c641e195687042e365eeb9",
+            "timestamp": 1760375210738,
+            "message": "REPORT RequestId: 3d353d99-36fb-44ff-aa81-d33c33b563c7\tDuration: 518.97 ms\tBilled Duration: 519 ms\tMemory Size: 256 MB\tMax Memory Used: 100 MB\t\n",
+            "ingestionTime": 1760375211336,
+            "eventId": "39257679028477787362855562700361620106189439262795956242"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]4040151f33f049cc88f158a83b3b60b5",
+            "timestamp": 1760375349178,
+            "message": "INIT_START Runtime Version: python:3.13.v63\tRuntime Version ARN: arn:aws:lambda:us-east-1::runtime:6e38c6392184a42a11f69b8b07e902e6615b10d7a884c3e3cbd4d0b8a5e42c07\n",
+            "ingestionTime": 1760375353040,
+            "eventId": "39257682115792952647435030585875805500746085341172924416"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]4040151f33f049cc88f158a83b3b60b5",
+            "timestamp": 1760375350118,
+            "message": "START RequestId: 0cf3ad46-c5b8-4207-b44e-27bcd667ef70 Version: $LATEST\n",
+            "ingestionTime": 1760375353040,
+            "eventId": "39257682136755653134053816338919380677035545156794515457"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]4040151f33f049cc88f158a83b3b60b5",
+            "timestamp": 1760375350118,
+            "message": "2025-10-13 17:09:10 UTC [INFO] Webhook Trading Lambda started\n",
+            "ingestionTime": 1760375353040,
+            "eventId": "39257682136755653134053816338919380677035545156794515458"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]4040151f33f049cc88f158a83b3b60b5",
+            "timestamp": 1760375350118,
+            "message": "2025-10-13 17:09:10 UTC [INFO] Event: {\"symbol\": \"AAPL\", \"action\": \"BUY\", \"qty\": 1, \"source\": \"newsapi\", \"confidence\": 0.9, \"stop_loss_pct\": 2.0, \"limit_pct\": 1.0}\n",
+            "ingestionTime": 1760375353040,
+            "eventId": "39257682136755653134053816338919380677035545156794515459"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]4040151f33f049cc88f158a83b3b60b5",
+            "timestamp": 1760375350119,
+            "message": "2025-10-13 17:09:10 UTC [INFO] Parsed webhook data: {'symbol': 'AAPL', 'action': 'BUY', 'qty': 1, 'source': 'newsapi', 'timestamp': '2025-10-13T17:09:10.118969'}\n",
+            "ingestionTime": 1760375353040,
+            "eventId": "39257682136777953879252346962060916395308193518300495876"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]4040151f33f049cc88f158a83b3b60b5",
+            "timestamp": 1760375350218,
+            "message": "2025-10-13 17:09:10 UTC [INFO] Duplicate webhook event detected: c83c835a6ad8225b659078754ae5f8becb956f1902ada7478c86681e6076d46b. Skipping execution.\n",
+            "ingestionTime": 1760375353040,
+            "eventId": "39257682138985727653906878653072952504300381307392557061"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]4040151f33f049cc88f158a83b3b60b5",
+            "timestamp": 1760375350222,
+            "message": "END RequestId: 0cf3ad46-c5b8-4207-b44e-27bcd667ef70\n",
+            "ingestionTime": 1760375353040,
+            "eventId": "39257682139074930634701001145639095377390974753416478726"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]4040151f33f049cc88f158a83b3b60b5",
+            "timestamp": 1760375350222,
+            "message": "REPORT RequestId: 0cf3ad46-c5b8-4207-b44e-27bcd667ef70\tDuration: 103.78 ms\tBilled Duration: 1041 ms\tMemory Size: 256 MB\tMax Memory Used: 98 MB\tInit Duration: 936.26 ms\t\n",
+            "ingestionTime": 1760375353040,
+            "eventId": "39257682139074930634701001145639095377390974753416478727"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]4040151f33f049cc88f158a83b3b60b5",
+            "timestamp": 1760375663222,
+            "message": "START RequestId: 1373a643-8e0e-4c3b-bc9d-8dd1134f3c1b Version: $LATEST\n",
+            "ingestionTime": 1760375672244,
+            "eventId": "39257689119208177774786044832213035529856072708266393600"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]4040151f33f049cc88f158a83b3b60b5",
+            "timestamp": 1760375663224,
+            "message": "2025-10-13 17:14:23 UTC [INFO] Webhook Trading Lambda started\n",
+            "ingestionTime": 1760375672244,
+            "eventId": "39257689119252779265183106078496106966401369431278354433"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]4040151f33f049cc88f158a83b3b60b5",
+            "timestamp": 1760375663224,
+            "message": "2025-10-13 17:14:23 UTC [INFO] Event: {\"symbol\": \"AAPL\", \"action\": \"BUY\", \"qty\": 1, \"source\": \"manual-test\", \"confidence\": 0.95, \"stop_loss_pct\": 1.5, \"limit_pct\": 2.0}\n",
+            "ingestionTime": 1760375672244,
+            "eventId": "39257689119252779265183106078496106966401369431278354434"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]4040151f33f049cc88f158a83b3b60b5",
+            "timestamp": 1760375663224,
+            "message": "2025-10-13 17:14:23 UTC [INFO] Parsed webhook data: {'symbol': 'AAPL', 'action': 'BUY', 'qty': 1, 'source': 'manual-test', 'timestamp': '2025-10-13T17:14:23.223691'}\n",
+            "ingestionTime": 1760375672244,
+            "eventId": "39257689119252779265183106078496106966401369431278354435"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]4040151f33f049cc88f158a83b3b60b5",
+            "timestamp": 1760375663424,
+            "message": "2025-10-13 17:14:23 UTC [WARNING] Trade for AAPL skipped: min-interval not passed\n",
+            "ingestionTime": 1760375672244,
+            "eventId": "39257689123712928304889230706803250620931041732474437636"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]4040151f33f049cc88f158a83b3b60b5",
+            "timestamp": 1760375663570,
+            "message": "Webhook log saved to S3: webhook-trades/2025/10/webhook_20251013_171423.json\n",
+            "ingestionTime": 1760375672244,
+            "eventId": "39257689126968837103874701685467465488737702512347578373"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]4040151f33f049cc88f158a83b3b60b5",
+            "timestamp": 1760375663572,
+            "message": "END RequestId: 1373a643-8e0e-4c3b-bc9d-8dd1134f3c1b\n",
+            "ingestionTime": 1760375672244,
+            "eventId": "39257689127013438594271762931750536925282999235359539206"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]4040151f33f049cc88f158a83b3b60b5",
+            "timestamp": 1760375663572,
+            "message": "REPORT RequestId: 1373a643-8e0e-4c3b-bc9d-8dd1134f3c1b\tDuration: 349.33 ms\tBilled Duration: 350 ms\tMemory Size: 256 MB\tMax Memory Used: 98 MB\t\n",
+            "ingestionTime": 1760375672244,
+            "eventId": "39257689127013438594271762931750536925282999235359539207"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]03fd08aae3304d75bfe54dbe9897d397",
+            "timestamp": 1760376756329,
+            "message": "INIT_START Runtime Version: python:3.13.v63\tRuntime Version ARN: arn:aws:lambda:us-east-1::runtime:6e38c6392184a42a11f69b8b07e902e6615b10d7a884c3e3cbd4d0b8a5e42c07\n",
+            "ingestionTime": 1760376758410,
+            "eventId": "39257713496308859504999916519991554677460931680246759424"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]03fd08aae3304d75bfe54dbe9897d397",
+            "timestamp": 1760376757031,
+            "message": "START RequestId: 5eb35dd9-908e-4b99-9a8d-2796c277960e Version: $LATEST\n",
+            "ingestionTime": 1760376758410,
+            "eventId": "39257713511963982634368413965349628904860081457445011457"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]03fd08aae3304d75bfe54dbe9897d397",
+            "timestamp": 1760376757031,
+            "message": "2025-10-13 17:32:37 UTC [INFO] Webhook Trading Lambda started\n",
+            "ingestionTime": 1760376758410,
+            "eventId": "39257713511963982634368413965349628904860081457445011458"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]03fd08aae3304d75bfe54dbe9897d397",
+            "timestamp": 1760376757031,
+            "message": "2025-10-13 17:32:37 UTC [INFO] Event: {\"action\": \"BUY\", \"qty\": 1, \"source\": \"72ebc12b-d9a0-4cee-b916-ed9a670e5d84\", \"confidence\": 0.95, \"limit_pct\": 2, \"stop_loss_pct\": 1.5, \"symbol\": \"AAPL\"}\n",
+            "ingestionTime": 1760376758410,
+            "eventId": "39257713511963982634368413965349628904860081457445011459"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]03fd08aae3304d75bfe54dbe9897d397",
+            "timestamp": 1760376757031,
+            "message": "2025-10-13 17:32:37 UTC [INFO] Parsed webhook data: {'symbol': 'AAPL', 'action': 'BUY', 'qty': 1, 'source': '72ebc12b-d9a0-4cee-b916-ed9a670e5d84', 'timestamp': '2025-10-13T17:32:37.031893'}\n",
+            "ingestionTime": 1760376758410,
+            "eventId": "39257713511963982634368413965349628904860081457445011460"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]03fd08aae3304d75bfe54dbe9897d397",
+            "timestamp": 1760376757152,
+            "message": "2025-10-13 17:32:37 UTC [WARNING] Trade for AAPL skipped: min-interval not passed\n",
+            "ingestionTime": 1760376758410,
+            "eventId": "39257713514662372803390619365475450815850533199668641797"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]03fd08aae3304d75bfe54dbe9897d397",
+            "timestamp": 1760376757300,
+            "message": "Webhook log saved to S3: webhook-trades/2025/10/webhook_20251013_173237.json\n",
+            "ingestionTime": 1760376758410,
+            "eventId": "39257713517962883092773151590422737120202490702553743366"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]03fd08aae3304d75bfe54dbe9897d397",
+            "timestamp": 1760376757302,
+            "message": "END RequestId: 5eb35dd9-908e-4b99-9a8d-2796c277960e\n",
+            "ingestionTime": 1760376758410,
+            "eventId": "39257713518007484583170212836705808556747787425565704199"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]03fd08aae3304d75bfe54dbe9897d397",
+            "timestamp": 1760376757302,
+            "message": "REPORT RequestId: 5eb35dd9-908e-4b99-9a8d-2796c277960e\tDuration: 270.47 ms\tBilled Duration: 969 ms\tMemory Size: 256 MB\tMax Memory Used: 98 MB\tInit Duration: 697.64 ms\t\n",
+            "ingestionTime": 1760376758410,
+            "eventId": "39257713518007484583170212836705808556747787425565704200"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]0746f1d63d484e0abf58910e81fbbedf",
+            "timestamp": 1760385688478,
+            "message": "INIT_START Runtime Version: python:3.13.v63\tRuntime Version ARN: arn:aws:lambda:us-east-1::runtime:6e38c6392184a42a11f69b8b07e902e6615b10d7a884c3e3cbd4d0b8a5e42c07\n",
+            "ingestionTime": 1760385693140,
+            "eventId": "39257912689887783815106890366541804258235052836898996224"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]0746f1d63d484e0abf58910e81fbbedf",
+            "timestamp": 1760385688882,
+            "message": "START RequestId: e475637b-ea79-4e0a-8a70-5000e2e87587 Version: $LATEST\n",
+            "ingestionTime": 1760385693140,
+            "eventId": "39257912698897284875313262115722234440384990885315084289"
+        },
+        {
+            "logStreamName": "2025/10/13/[$LATEST]0746f1d63d484e0abf58910e81fbbedf",
+            "timestamp": 1760385688883,
+            "message": 

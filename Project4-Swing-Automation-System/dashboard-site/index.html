@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Swing History Dashboard</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Swing Trading - 30 Day History</h1>
+      <div class="controls">
+        <label>API URL: <input id="apiUrl" size="80" placeholder="https://your-function-url-or-api-gw/" /></label>
+        <button id="loadBtn">Load</button>
+        <span id="status"></span>
+      </div>
+    </header>
+    <main>
+      <table id="historyTable">
+        <thead>
+          <tr>
+            <th>Submitted</th>
+            <th>Filled</th>
+            <th>Symbol</th>
+            <th>Side</th>
+            <th>Qty</th>
+            <th>Status</th>
+            <th>Avg Fill</th>
+            <th>Realized P/L</th>
+            <th>Type</th>
+            <th>Reason Source</th>
+            <th>Signal Price</th>
+            <th>Signal Volume</th>
+            <th>Signal Received</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </main>
+    <script src="script.js"></script>
+  </body>
+  </html>

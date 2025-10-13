@@ -1,38 +1,102 @@
 import boto3
 import json
-import requests
 import os
-from datetime import datetime, timedelta
+import time
+from datetime import datetime, timedelta, timezone
+
+try:
+    import requests
+except Exception:
+    requests = None
+
+_secrets_client = None
+_ses_client = None
+
+def get_secrets_client():
+    global _secrets_client
+    if _secrets_client is None:
+        _secrets_client = boto3.client('secretsmanager')
+    return _secrets_client
+
+def get_ses_client():
+    global _ses_client
+    if _ses_client is None:
+        _ses_client = boto3.client('ses')
+    return _ses_client
 
 def get_alpaca_keys():
-    """Retrieve Alpaca API keys from AWS Secrets Manager"""
-    client = boto3.client('secretsmanager')
-    secret_name = "swing-alpaca/papter-trading/keys"
+    """Retrieve Alpaca API keys from AWS Secrets Manager (lazy)."""
+    secret_name = os.environ.get('ALPACA_SECRET_NAME', "swing-alpaca/papter-trading/keys")
     try:
-        response = client.get_secret_value(SecretId=secret_name)
+        response = get_secrets_client().get_secret_value(SecretId=secret_name)
         secret = json.loads(response['SecretString'])
         return secret['ALPACA_API_KEY'], secret['ALPACA_SECRET_KEY']
     except Exception as e:
-        print(f"Error retrieving secrets: {e}")
+        print(f"Error retrieving secrets '{secret_name}': {e}")
         raise
 
-# Initialize
-API_KEY, SECRET_KEY = get_alpaca_keys()
-TRADING_URL = "https://paper-api.alpaca.markets"
-DATA_URL = "https://data.alpaca.markets"
-HEADERS = {
-    "APCA-API-KEY-ID": API_KEY,
-    "APCA-API-SECRET-KEY": SECRET_KEY
-}
-ses_client = boto3.client('ses')
+def _request_with_retries(method: str, url: str, *, headers=None, json_body=None, params=None, timeout=10, max_retries=3, backoff_factor=0.5):
+    last_err = None
+    for attempt in range(max_retries + 1):
+        try:
+            if requests is None:
+                import urllib.request
+                import urllib.parse
+                if params:
+                    query = urllib.parse.urlencode(params)
+                    url2 = f"{url}?{query}"
+                else:
+                    url2 = url
+                req = urllib.request.Request(url2, method=method.upper())
+                if headers:
+                    for k, v in headers.items():
+                        req.add_header(k, v)
+                if json_body is not None:
+                    data = json.dumps(json_body).encode('utf-8')
+                    req.add_header('Content-Type', 'application/json')
+                else:
+                    data = None
+                with urllib.request.urlopen(req, data=data, timeout=timeout) as resp:
+                    body = resp.read().decode('utf-8')
+                    status = resp.getcode()
+                    if status < 200 or status >= 300:
+                        print(f"Non-2xx response from {url}: {status} body={body[:500]}")
+                    return status, json.loads(body) if body else {}
+            else:
+                resp = requests.request(method.upper(), url, headers=headers, json=json_body, params=params, timeout=timeout)
+                text = resp.text or ''
+                if resp.status_code < 200 or resp.status_code >= 300:
+                    print(f"Non-2xx response from {url}: {resp.status_code} body={text[:500]}")
+                return resp.status_code, (resp.json() if text else {})
+        except Exception as e:
+            last_err = e
+            if attempt < max_retries:
+                sleep_for = backoff_factor * (2 ** attempt)
+                print(f"HTTP error on {method} {url}: {e}; retrying in {sleep_for:.1f}s ({attempt+1}/{max_retries})")
+                time.sleep(sleep_for)
+            else:
+                print(f"HTTP failed after retries: {e}")
+                raise
+
+# Config (lazy secrets)
+TRADING_URL = os.environ.get('ALPACA_TRADING_URL', "https://paper-api.alpaca.markets")
+DATA_URL = os.environ.get('ALPACA_DATA_URL', "https://data.alpaca.markets")
+
+def get_headers():
+    api_key, secret_key = get_alpaca_keys()
+    return {
+        "APCA-API-KEY-ID": api_key,
+        "APCA-API-SECRET-KEY": secret_key
+    }
 
 def get_account_info():
     """Get account information"""
     url = f"{TRADING_URL}/v2/account"
     try:
-        response = requests.get(url, headers=HEADERS)
-        response.raise_for_status()
-        return response.json()
+        status, data = _request_with_retries('GET', url, headers=get_headers())
+        if 200 <= status < 300:
+            return data
+        return None
     except Exception as e:
         print(f"Error getting account info: {e}")
         return None
@@ -41,9 +105,10 @@ def get_positions():
     """Get current positions"""
     url = f"{TRADING_URL}/v2/positions"
     try:
-        response = requests.get(url, headers=HEADERS)
-        response.raise_for_status()
-        return response.json()
+        status, data = _request_with_retries('GET', url, headers=get_headers())
+        if 200 <= status < 300:
+            return data
+        return []
     except Exception as e:
         print(f"Error getting positions: {e}")
         return []
@@ -53,9 +118,10 @@ def get_orders(status="all", limit=50):
     url = f"{TRADING_URL}/v2/orders"
     params = {"status": status, "limit": limit, "direction": "desc"}
     try:
-        response = requests.get(url, headers=HEADERS, params=params)
-        response.raise_for_status()
-        return response.json()
+        status_code, data = _request_with_retries('GET', url, headers=get_headers(), params=params)
+        if 200 <= status_code < 300:
+            return data
+        return []
     except Exception as e:
         print(f"Error getting orders: {e}")
         return []
@@ -64,10 +130,10 @@ def get_current_price(symbol):
     """Get current price for symbol"""
     url = f"{DATA_URL}/v2/stocks/{symbol}/trades/latest"
     try:
-        response = requests.get(url, headers=HEADERS)
-        response.raise_for_status()
-        data = response.json()
-        return data.get('trade', {}).get('p', 0)
+        status, data = _request_with_retries('GET', url, headers=get_headers())
+        if 200 <= status < 300:
+            return (data or {}).get('trade', {}).get('p', 0)
+        return 0
     except Exception as e:
         print(f"Error getting price for {symbol}: {e}")
         return 0
@@ -75,6 +141,24 @@ def get_current_price(symbol):
 def send_portfolio_report(account, positions, recent_orders):
     """Send comprehensive portfolio report"""
     
+    def _now_utc():
+        return datetime.now(timezone.utc)
+
+    def _parse_iso(ts: str):
+        if not ts:
+            return None
+        try:
+            # Normalize trailing Z to +00:00 for fromisoformat
+            ts2 = ts.replace('Z', '+00:00')
+            return datetime.fromisoformat(ts2)
+        except Exception:
+            return None
+
+    def _ensure_aware(dt):
+        if not dt:
+            return None
+        return dt if dt.tzinfo is not None else dt.replace(tzinfo=timezone.utc)
+
     # Calculate totals
     total_value = float(account.get('portfolio_value', 0))
     total_pnl = float(account.get('unrealized_pl', 0))
@@ -86,7 +170,7 @@ def send_portfolio_report(account, positions, recent_orders):
     
     # Recent trades
     filled_orders = [o for o in recent_orders if o.get('status') == 'filled']
-    today_orders = [o for o in filled_orders if o.get('filled_at', '').startswith(datetime.utcnow().strftime('%Y-%m-%d'))]
+    today_orders = [o for o in filled_orders if o.get('filled_at', '').startswith(_now_utc().strftime('%Y-%m-%d'))]
     
     subject = f"📊 Portfolio Report - ${total_value:,.2f} ({'+' if total_pnl >= 0 else ''}${total_pnl:,.2f}) - {datetime.utcnow().strftime('%Y-%m-%d')}"
     
@@ -153,7 +237,7 @@ TODAY'S TRADING ACTIVITY: {len(today_orders)}
     
     body += f"""
 
-RECENT ORDERS (Last 7 days): {len([o for o in recent_orders if (datetime.utcnow() - datetime.fromisoformat(o.get('created_at', '2020-01-01T00:00:00').replace('Z', '+00:00'))).days <= 7])}
+RECENT ORDERS (Last 7 days): {sum(1 for o in recent_orders if (lambda _dt: (_dt is not None and (_now_utc() - _dt).days <= 7))(_ensure_aware(_parse_iso(o.get('created_at', '')))))}
 {'-'*40}
 Filled: {len([o for o in recent_orders if o.get('status') == 'filled'])}
 Cancelled: {len([o for o in recent_orders if o.get('status') == 'canceled'])}
@@ -166,7 +250,7 @@ Portfolio Report Generated: {datetime.utcnow().isoformat()}
 """
     
     try:
-        ses_client.send_email(
+        get_ses_client().send_email(
             Source='mhussain.myindia@gmail.com',
             Destination={'ToAddresses': ['mhussain.myindia@gmail.com']},
             Message={
