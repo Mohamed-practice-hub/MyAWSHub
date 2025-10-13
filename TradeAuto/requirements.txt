@@ -1,5 +1,0 @@
-# Runtime deps placed in each Lambda zip during packaging
-# boto3 not required in zip (provided by AWS Lambda runtime)
-kiteconnect==4.2.0
-requests>=2.32.3,<3
-python-dateutil>=2.9.0.post0
