@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TradeAuto - 30 Day History</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>TradeAuto - 30 Day History</h1>
+    <div class="controls">
+      <label>API URL <input id="apiUrl" placeholder="https://xxxx.lambda-url...." /></label>
+      <button id="loadBtn">Load</button>
+    </div>
+  </header>
+
+  <main>
+    <table id="historyTable">
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>Symbol</th>
+          <th>Side</th>
+          <th>Qty</th>
+          <th>Status</th>
+          <th>Avg Price</th>
+          <th>Reason/Tag</th>
+          <th>Order Id</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
