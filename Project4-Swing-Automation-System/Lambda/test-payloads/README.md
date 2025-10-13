@@ -55,4 +55,4 @@ All Lambda functions executed successfully with comprehensive email notification
 2. **Performance Analyzer**: No historical signals found to analyze
 3. **Sentiment Enhanced Bot**: Completed enhanced analysis successfully
 
-Check your email (mhussain.myindia@outlook.com) for detailed notification reports from each function.
+Check your email (mhussain.myindia@gmail.com) for detailed notification reports from each function.

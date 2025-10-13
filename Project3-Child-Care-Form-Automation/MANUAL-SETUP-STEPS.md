@@ -15,7 +15,7 @@ aws sns create-topic --name project3-childcare-sms --region us-east-1
 
 ## Step 2: Subscribe Email to SNS
 ```bash
-aws sns subscribe --topic-arn arn:aws:sns:us-east-1:206055866143:project3-childcare-sms --protocol email --notification-endpoint mhussain.myindia@outlook.com --region us-east-1
+aws sns subscribe --topic-arn arn:aws:sns:us-east-1:206055866143:project3-childcare-sms --protocol email --notification-endpoint mhussain.myindia@gmail.com --region us-east-1
 ```
 **Note**: Check your email and confirm the subscription!
 
@@ -121,7 +121,7 @@ aws lambda invoke --function-name project3-childcare-processor --cli-binary-form
 **✅ Confirmed Working Components:**
 - API Gateway: `https://wbmyjwq1m3.execute-api.us-east-1.amazonaws.com/prod/childcare`
 - Lambda Function: Processing requests successfully
-- SNS Email: Delivering to `mhussain.myindia@outlook.com`
+- SNS Email: Delivering to `mhussain.myindia@gmail.com`
 - Cost: **$0/month** (completely free!)
 
 **📧 Email Notifications:**
@@ -169,6 +169,6 @@ aws sns delete-topic --topic-arn arn:aws:sns:us-east-1:206055866143:project3-chi
 **Your Child Care Form Automation System is fully deployed and working!**
 
 - **API Endpoint**: `https://wbmyjwq1m3.execute-api.us-east-1.amazonaws.com/prod/childcare`
-- **Email Notifications**: `mhussain.myindia@outlook.com`
+- **Email Notifications**: `mhussain.myindia@gmail.com`
 - **Monthly Cost**: $0 (Free tier)
 - **Status**: ✅ Production Ready

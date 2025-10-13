@@ -62,7 +62,7 @@ Complete step-by-step manual setup guide for the AWS Swing Trading Automation Sy
 2. Click "Verified identities" in left sidebar
 3. Click "Create identity"
 4. **Identity type**: Email address
-5. **Email address**: `mhussain.myindia@outlook.com`
+5. **Email address**: `mhussain.myindia@gmail.com`
 6. Click "Create identity"
 7. **Check your email** and click verification link
 8. Wait for status to change to "Verified"
@@ -142,7 +142,7 @@ Complete step-by-step manual setup guide for the AWS Swing Trading Automation Sy
 2. Click "Edit" → "Add environment variable"
 3. Add these variables:
    - `BUCKET_NAME`: `swing-automation-data-processor`
-   - `EMAIL_RECIPIENT`: `mhussain.myindia@outlook.com`
+   - `EMAIL_RECIPIENT`: `mhussain.myindia@gmail.com`
 4. Click "Save"
 
 ### Performance Analyzer Lambda
@@ -168,7 +168,7 @@ Complete step-by-step manual setup guide for the AWS Swing Trading Automation Sy
 2. **Memory**: 1024 MB
 3. **Environment Variables**:
    - `BUCKET_NAME`: `swing-automation-data-processor`
-   - `EMAIL_RECIPIENT`: `mhussain.myindia@outlook.com`
+   - `EMAIL_RECIPIENT`: `mhussain.myindia@gmail.com`
 
 **Validation:**
 - Both Lambda functions appear in console

@@ -1,16 +1,44 @@
 import boto3
-import json
-import requests
-import pandas as pd
-import numpy as np
-from datetime import datetime, timedelta
-import time
-import base64
+    body = []
+    body.append("🎯 SWING TRADING BOT - SENTIMENT-ENHANCED SIGNALS")
+    body.append(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} {DEFAULT_TZ}")
+    body.append("")
+    body.append("SIGNAL SUMMARY:")
+    body.append(f"  Total Signals: {len(signals)}")
+    body.append(f"  Strong: {len([s for s in signals if s['signal_strength'] == 'STRONG'])} | Moderate: {len([s for s in signals if s['signal_strength'] == 'MODERATE'])} | Weak: {len([s for s in signals if s['signal_strength'] == 'WEAK'])}")
+    body.append("")
+    body.append("ACTIVE SIGNALS (fixed-width columns):")
+    # Table header
+    header = f"{'SYMBOL':<8} {'SIGNAL':<12} {'STRENGTH':<10} {'PRICE':>10} {'RSI':>6} {'SENTIMENT':>10} {'CONF':>6}"
+    body.append(header)
+    body.append('-' * len(header))
 
-# Initialize AWS clients
-s3_client = boto3.client('s3')
-ses_client = boto3.client('ses')
-secrets_client = boto3.client('secretsmanager')
+    for result in signals:
+        sym = result['symbol']
+        sig = result['signal']
+        strength = result['signal_strength']
+        price = f"${result['current_price']:.2f}"
+        rsi = f"{result['rsi']:.1f}"
+        sent = f"{result['sentiment_score']:.3f}"
+        conf = f"{result['sentiment_confidence']:.2f}"
+        row = f"{sym:<8} {sig:<12} {strength:<10} {price:>10} {rsi:>6} {sent:>10} {conf:>6}"
+        body.append(row)
+
+    body.append("")
+    body.append("SENTIMENT BREAKDOWN:")
+    try:
+        if ZoneInfo is not None:
+            return datetime.now(ZoneInfo(DEFAULT_TZ)).strftime('%Y-%m-%d %H:%M:%S %Z')
+    except Exception:
+        pass
+    # fallback to UTC if zoneinfo not available
+    return datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')
+
+def log(message, level='INFO'):
+    # include request id if available in global
+    req = getattr(log, 'request_id', 'N/A')
+    ts = _get_now_tz()
+    print(f"{ts} [{level}] request_id={req} - {message}")
 
 def get_all_secrets():
     """Retrieve all API keys from AWS Secrets Manager"""
@@ -236,28 +264,68 @@ def get_stock_data(symbol, api_key, secret_key):
     if not bars:
         print(f"❌ No data available for {symbol}")
         return None
+
+    # Persist raw bars to S3 for auditing and historical analysis
+    try:
+        s3_key = f"historical/{symbol}/{datetime.utcnow().strftime('%Y/%m/%d')}/bars_{datetime.utcnow().strftime('%H%M%S')}.json"
+        s3_client.put_object(Bucket=os.environ.get('BUCKET_NAME', 'swing-automation-data-processor'), Key=s3_key, Body=json.dumps(bars), ContentType='application/json')
+        print(f"Saved historical bars to s3://{os.environ.get('BUCKET_NAME', 'swing-automation-data-processor')}/{s3_key}")
+    except Exception as e:
+        print(f"⚠️ Unable to save bars to S3: {e}")
     
-    # Convert to DataFrame for analysis
-    df = pd.DataFrame(bars)
-    df['timestamp'] = pd.to_datetime(df['t'])
-    df = df.sort_values('timestamp')
-    
-    # Calculate technical indicators
-    df['rsi'] = calculate_rsi(df['c'].values)
-    df['ema_12'] = df['c'].ewm(span=12).mean()
-    df['ema_26'] = df['c'].ewm(span=26).mean()
-    
-    latest = df.iloc[-1]
-    
-    return {
-        'symbol': symbol,
-        'current_price': float(latest['c']),
-        'rsi': float(latest['rsi']),
-        'ema_12': float(latest['ema_12']),
-        'ema_26': float(latest['ema_26']),
-        'volume': int(latest['v']),
-        'timestamp': latest['timestamp'].isoformat()
-    }
+    # If pandas is available, use DataFrame convenience. Otherwise compute manually.
+    try:
+        if PANDAS_AVAILABLE and pd is not None:
+            df = pd.DataFrame(bars)
+            df['timestamp'] = pd.to_datetime(df['t'])
+            df = df.sort_values('timestamp')
+            # Calculate technical indicators
+            df['rsi'] = calculate_rsi(df['c'].values)
+            df['ema_12'] = df['c'].ewm(span=12).mean()
+            df['ema_26'] = df['c'].ewm(span=26).mean()
+            latest = df.iloc[-1]
+            return {
+                'symbol': symbol,
+                'current_price': float(latest['c']),
+                'rsi': float(latest['rsi']),
+                'ema_12': float(latest['ema_12']),
+                'ema_26': float(latest['ema_26']),
+                'volume': int(latest['v']),
+                'timestamp': latest['timestamp'].isoformat()
+            }
+        else:
+            # Manual computation using lists and numpy
+            prices = [float(bar['c']) for bar in bars]
+            timestamps = [bar.get('t') for bar in bars]
+            prices = prices[::-1] if False else prices  # ensure chronological if needed
+
+            # RSI array
+            rsi_array = calculate_rsi(prices)
+
+            # Simple EMA helper
+            def calc_ema(prices_list, period):
+                ema = prices_list[0]
+                multiplier = 2 / (period + 1)
+                for p in prices_list[1:]:
+                    ema = (p - ema) * multiplier + ema
+                return ema
+
+            ema_12 = calc_ema(prices, 12)
+            ema_26 = calc_ema(prices, 26)
+
+            latest_idx = -1
+            return {
+                'symbol': symbol,
+                'current_price': float(prices[latest_idx]),
+                'rsi': float(rsi_array[latest_idx]) if len(rsi_array) > 0 else 50.0,
+                'ema_12': float(ema_12),
+                'ema_26': float(ema_26),
+                'volume': int(bars[latest_idx].get('v', 0)),
+                'timestamp': datetime.utcnow().isoformat()
+            }
+    except Exception as e:
+        print(f"❌ Error computing technicals for {symbol}: {e}")
+        return None
 
 def calculate_rsi(prices, period=14):
     """Calculate RSI indicator"""
@@ -439,7 +507,7 @@ Not financial advice. Always do your own research.
     
     try:
         ses_client.send_email(
-            Source='mhussain.myindia@outlook.com',
+            Source=os.environ.get('EMAIL_SOURCE', 'mhussain.myindia@gmail.com'),
             Destination={'ToAddresses': [recipient_email]},
             Message={
                 'Subject': {'Data': subject},
@@ -452,16 +520,22 @@ Not financial advice. Always do your own research.
 
 def lambda_handler(event, context):
     """Enhanced Lambda handler with sentiment analysis"""
-    print("🚀 Starting sentiment-enhanced swing trading analysis...")
-    
-    # Get configuration
-    bucket_name = "swing-automation-data-processor"
-    email_recipient = "mhussain.myindia@outlook.com"
-    symbols = event.get('symbols', ['AAPL', 'NVDA', 'MSFT', 'AMD', 'TSLA'])
+    log("🚀 Starting sentiment-enhanced swing trading analysis...")
+    # attach request id for subsequent log lines
+    try:
+        log.request_id = getattr(context, 'aws_request_id', 'N/A')
+    except Exception:
+        log.request_id = 'N/A'
+    # Get configuration from environment variables
+    bucket_name = os.environ.get('BUCKET_NAME', 'swing-automation-data-processor')
+    email_recipient = os.environ.get('EMAIL_RECIPIENT', os.environ.get('EMAIL_SOURCE', 'mhussain.myindia@gmail.com'))
+    symbols = event.get('symbols', ['AAPL', 'NVDA', 'MSFT', 'AMD', 'TSLA', 'ARKK', 'BOTZ', 'QQQ'])
+    mode = event.get('mode', 'run')  # 'run' or 'check'
     
     # Get all API keys
     api_keys = get_all_secrets()
     if not api_keys:
+        log('Failed to retrieve API keys', level='ERROR')
         return {'statusCode': 500, 'body': 'Failed to retrieve API keys'}
     
     alpaca_api_key = api_keys.get('ALPACA_API_KEY')
@@ -470,14 +544,43 @@ def lambda_handler(event, context):
     if not alpaca_api_key or not alpaca_secret_key:
         return {'statusCode': 500, 'body': 'Alpaca API keys not found'}
     
+    # If running in 'check' mode, verify S3 daily-analysis for today's date and alert if missing
+    if mode == 'check':
+        today_prefix = f"daily-analysis/{datetime.now().strftime('%Y/%m/%d')}/"
+        try:
+            resp = s3_client.list_objects_v2(Bucket=bucket_name, Prefix=today_prefix, MaxKeys=1)
+            if 'Contents' in resp and resp['KeyCount'] > 0:
+                log(f"Daily analysis found for today under {today_prefix}")
+                return {'statusCode': 200, 'body': 'Daily analysis exists'}
+            else:
+                # Send alert email
+                alert_body = f"Alert: No daily analysis files found in s3://{bucket_name}/{today_prefix}"
+                try:
+                    ses_client.send_email(
+                        Source=os.environ.get('EMAIL_SOURCE', 'mhussain.myindia@gmail.com'),
+                        Destination={'ToAddresses': [email_recipient]},
+                        Message={
+                            'Subject': {'Data': f"⚠️ Missing daily analysis - {datetime.now().strftime('%Y-%m-%d') }"},
+                            'Body': {'Text': {'Data': alert_body}}
+                        }
+                    )
+                    log(f"Missing-file alert sent to {email_recipient}")
+                except Exception as e:
+                    log(f"Error sending missing-file alert: {e}", level='ERROR')
+                return {'statusCode': 200, 'body': 'Missing daily analysis - alert sent'}
+        except Exception as e:
+            log(f"Error checking S3 for daily analysis: {e}", level='ERROR')
+            return {'statusCode': 500, 'body': 'Error checking S3'}
+
     analysis_results = []
     
     for symbol in symbols:
-        print(f"\n🔍 Analyzing {symbol}...")
+        log(f"Analyzing {symbol}...")
         
         # Get stock data
         stock_data = get_stock_data(symbol, alpaca_api_key, alpaca_secret_key)
         if not stock_data:
+            log(f"No stock data for {symbol}, skipping", level='WARNING')
             continue
         
         # Get multi-source sentiment
@@ -486,9 +589,8 @@ def lambda_handler(event, context):
         # Perform enhanced analysis
         result = enhanced_signal_analysis(stock_data, sentiment_score, confidence, source_details)
         analysis_results.append(result)
-        
-        print(f"✅ {symbol}: {result['signal']} ({result['signal_strength']})")
-        
+        log(f"{symbol}: {result['signal']} ({result['signal_strength']})")
+
         # Rate limiting between symbols
         time.sleep(2)
     
@@ -498,6 +600,7 @@ def lambda_handler(event, context):
     # Save daily analysis
     daily_key = f"daily-analysis/{datetime.now().strftime('%Y/%m/%d')}/sentiment_analysis_{timestamp}.json"
     save_to_s3(analysis_results, bucket_name, daily_key)
+    log(f"Saved daily analysis to {daily_key}")
     
     # Save signals only
     signals = [r for r in analysis_results if r['signal'] != 'HOLD']
