@@ -42,31 +42,35 @@ public class AnalysisHandler implements RequestHandler<Map<String, Object>, Map<
             List<String> errorDetails = new ArrayList<>();
             
             // Process each symbol
-           for (String symbol : symbols) {
-    try {
-        System.out.println("Analyzing symbol: " + symbol);
-        // Fetch all historical data for symbol (1 year)
-        List<Map<String, AttributeValue>> historicalData = fetchHistoricalData(symbol, 365);
-        if (historicalData.size() < backfillDays) {
-            System.out.println("Insufficient OHLC data for " + symbol);
-            errorDetails.add(symbol + ": Insufficient OHLC data");
-            continue;
-        }
-        // Only update TA for last N days
-        List<Map<String, AttributeValue>> recentRows = historicalData.subList(historicalData.size() - backfillDays, historicalData.size());
-        List<Map<String, Object>> signals = performTechnicalAnalysis(symbol, historicalData);
-        for (int i = 0; i < recentRows.size(); i++) {
-            Map<String, AttributeValue> row = recentRows.get(i);
-            Map<String, Object> signal = signals.get(signals.size() - backfillDays + i);
-            storeSignalForRow(symbol, row, signal);
-        }
-        processedSymbols.add(symbol);
-        System.out.println("Successfully analyzed " + symbol + " - Updated TA for last " + backfillDays + " days");
-    } catch (Exception e) {
-        System.err.println("Error analyzing symbol " + symbol + ": " + e.getMessage());
-        errorDetails.add(symbol + ": " + e.getMessage());
-    }
-}
+            for (String symbol : symbols) {
+                try {
+                    System.out.println("Analyzing symbol: " + symbol);
+                    
+                    // Fetch historical data
+                    List<Map<String, AttributeValue>> historicalData = fetchHistoricalData(symbol, backfillDays);
+                    
+                    if (!historicalData.isEmpty()) {
+                        // Perform analysis
+                        List<Map<String, Object>> signals = performTechnicalAnalysis(symbol, historicalData);
+                        
+                        // Store signals
+                        if (!signals.isEmpty()) {
+                            storeSignals(symbol, signals);
+                            processedSymbols.add(symbol);
+                            System.out.println("Successfully analyzed " + symbol + " - Generated " + signals.size() + " signals");
+                        } else {
+                            System.out.println("No signals generated for " + symbol);
+                        }
+                    } else {
+                        System.out.println("No historical data found for " + symbol);
+                        errorDetails.add(symbol + ": No historical data");
+                    }
+                    
+                } catch (Exception e) {
+                    System.err.println("Error analyzing symbol " + symbol + ": " + e.getMessage());
+                    errorDetails.add(symbol + ": " + e.getMessage());
+                }
+            }
             
             // Prepare response
             response.put("statusCode", 200);
@@ -76,32 +80,6 @@ public class AnalysisHandler implements RequestHandler<Map<String, Object>, Map<
             response.put("errorDetails", errorDetails);
             
             System.out.println("Analysis completed. Processed: " + processedSymbols.size() + "/" + symbols.size());
-            
-            // Always export after analysis, directly to S3 (no /tmp/ file)
-            try {
-                List<Map<String, Object>> allItems = new ArrayList<>();
-                Map<String, AttributeValue> lastKey = null;
-                do {
-                    ScanRequest scanReq = new ScanRequest().withTableName(tableName);
-                    if (lastKey != null) scanReq = scanReq.withExclusiveStartKey(lastKey);
-                    ScanResult result = dynamoDB.scan(scanReq);
-                    for (Map<String, AttributeValue> item : result.getItems()) {
-                        allItems.add(deserializeItem(item));
-                    }
-                    lastKey = result.getLastEvaluatedKey();
-                } while (lastKey != null && !lastKey.isEmpty());
-                String s3Bucket = "tradebot-206055866143-dashboard";
-                String s3Key = "data.json";
-                com.amazonaws.services.s3.AmazonS3 s3 = com.amazonaws.services.s3.AmazonS3ClientBuilder.defaultClient();
-                String jsonData = objectMapper.writeValueAsString(allItems);
-                s3.putObject(s3Bucket, s3Key, jsonData);
-                response.put("exportedS3Uri", "s3://" + s3Bucket + "/" + s3Key);
-                response.put("exportedCount", allItems.size());
-                System.out.println("Exported " + allItems.size() + " items to S3: s3://" + s3Bucket + "/" + s3Key);
-            } catch (Exception ex) {
-                response.put("exportError", ex.getMessage());
-                System.err.println("Export failed: " + ex.getMessage());
-            }
             
         } catch (Exception e) {
             System.err.println("Critical error in analysis: " + e.getMessage());
@@ -113,25 +91,6 @@ public class AnalysisHandler implements RequestHandler<Map<String, Object>, Map<
         
         return response;
     }
-	
-	private void storeSignalForRow(String symbol, Map<String, AttributeValue> row, Map<String, Object> signal) {
-    try {
-        Map<String, AttributeValue> item = new HashMap<>(row); // copy existing OHLC fields
-        item.put("SignalType", new AttributeValue().withS((String) signal.get("signalType")));
-        item.put("Indicator", new AttributeValue().withS((String) signal.get("indicator")));
-        item.put("Strength", new AttributeValue().withS((String) signal.get("strength")));
-        item.put("Price", new AttributeValue().withN(String.valueOf(signal.get("price"))));
-        item.put("Details", new AttributeValue().withS((String) signal.get("details")));
-        item.put("Timestamp", new AttributeValue().withS(Instant.now().toString()));
-        item.put("data_type", new AttributeValue().withS("signal"));
-        PutItemRequest putRequest = new PutItemRequest()
-            .withTableName(tableName)
-            .withItem(item);
-        dynamoDB.putItem(putRequest);
-    } catch (Exception e) {
-        System.err.println("Error storing signal for " + symbol + ": " + e.getMessage());
-    }
-}
     
     @SuppressWarnings("unchecked")
     private List<String> getSymbolsFromEvent(Map<String, Object> event) {
