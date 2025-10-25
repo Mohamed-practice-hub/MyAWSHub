@@ -77,24 +77,30 @@ public class AnalysisHandler implements RequestHandler<Map<String, Object>, Map<
             
             System.out.println("Analysis completed. Processed: " + processedSymbols.size() + "/" + symbols.size());
             
-            // Exporter logic: if event contains 'export': true, write full table to /tmp/data.json and upload to S3
-            if (event.containsKey("export") && Boolean.TRUE.equals(event.get("export"))) {
-                try {
-                    int count = exportTableToJsonFile("/tmp/data.json");
-                    String s3Key = "data.json";
-                    String s3Bucket = "tradebot-206055866143-dashboard";
-                    uploadFileToS3("/tmp/data.json", s3Bucket, s3Key);
-                    response.put("exportedS3Uri", "s3://" + s3Bucket + "/" + s3Key);
-                    response.put("exportedCount", count);
-                    response.put("exportedFile", "/tmp/data.json");
-                    System.out.println("Exported " + count + " items to /tmp/data.json");
-                    System.out.println("Uploaded to S3: s3://" + s3Bucket + "/" + s3Key);
-                } catch (Exception ex) {
-                    response.put("exportError", ex.getMessage());
-                    System.err.println("Export failed: " + ex.getMessage());
-                }
-                // Optionally: return here if you want export-only mode
-                // return response;
+            // Always export after analysis, directly to S3 (no /tmp/ file)
+            try {
+                List<Map<String, Object>> allItems = new ArrayList<>();
+                Map<String, AttributeValue> lastKey = null;
+                do {
+                    ScanRequest scanReq = new ScanRequest().withTableName(tableName);
+                    if (lastKey != null) scanReq = scanReq.withExclusiveStartKey(lastKey);
+                    ScanResult result = dynamoDB.scan(scanReq);
+                    for (Map<String, AttributeValue> item : result.getItems()) {
+                        allItems.add(deserializeItem(item));
+                    }
+                    lastKey = result.getLastEvaluatedKey();
+                } while (lastKey != null && !lastKey.isEmpty());
+                String s3Bucket = "tradebot-206055866143-dashboard";
+                String s3Key = "data.json";
+                com.amazonaws.services.s3.AmazonS3 s3 = com.amazonaws.services.s3.AmazonS3ClientBuilder.defaultClient();
+                String jsonData = objectMapper.writeValueAsString(allItems);
+                s3.putObject(s3Bucket, s3Key, jsonData);
+                response.put("exportedS3Uri", "s3://" + s3Bucket + "/" + s3Key);
+                response.put("exportedCount", allItems.size());
+                System.out.println("Exported " + allItems.size() + " items to S3: s3://" + s3Bucket + "/" + s3Key);
+            } catch (Exception ex) {
+                response.put("exportError", ex.getMessage());
+                System.err.println("Export failed: " + ex.getMessage());
             }
             
         } catch (Exception e) {
