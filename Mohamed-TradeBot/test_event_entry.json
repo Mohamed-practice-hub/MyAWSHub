@@ -1,0 +1,1 @@
+[{"Source":"com.tradebot.test","DetailType":"test-backfill","Detail":"{\"symbols\":[\"RELIANCE\",\"TCS\",\"INFY\",\"HDFCBANK\",\"ICICIBANK\",\"SBIN\",\"KOTAKBANK\",\"LT\",\"MARUTI\",\"TATAMOTORS\",\"HINDUNILVR\",\"ITC\",\"BHARTIARTL\",\"ADANIENT\",\"AXISBANK\"],\"backfilldays\":3}","Resources":["arn:aws:events:us-east-1:206055866143:rule/tradebot-daily-fetch-backfill"]}]

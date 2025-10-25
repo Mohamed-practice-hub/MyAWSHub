@@ -1,0 +1,5 @@
+{
+  "backfilldays": 200,
+  "symbols": ["RELIANCE"],
+  "override": true
+}

@@ -1,0 +1,7 @@
+{
+  "TableName": "tradebot_signals_table",
+  "KeyConditionExpression": "SymbolKey = :s",
+  "ExpressionAttributeValues": {":s": {"S": "RELIANCE"}},
+  "ScanIndexForward": false,
+  "Limit": 5
+}

@@ -1,0 +1,7 @@
+﻿{
+    "dynamodb":  {
+                     "region":  "us-east-1",
+                     "tableName":  "tradebot_table",
+                     "identityPoolId":  "us-east-1:4a9a27f0-b0c4-45aa-95c7-623e45925748"
+                 }
+}

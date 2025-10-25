@@ -1,0 +1,8 @@
+[
+  {"Close": "1462.7", "Timestamp": "2025-10-20T18:27:43.198747", "Low": "1450", "High": "1467", "Open": "1453.7", "TradedDate": "2025-10-19", "Volume": "6937393", "SymbolKey": "INFY"},
+  {"Close": "1460.9", "Timestamp": "2025-10-20T18:27:42.537645", "Low": "1450", "High": "1467", "Open": "1453.7", "TradedDate": "2025-10-20", "Volume": "6938070", "SymbolKey": "INFY"},
+  {"Close": "1390.6", "Timestamp": "2025-10-20T18:18:10.759595", "Low": "1388", "High": "1410.7", "Open": "1403.9", "TradedDate": "2025-09-21", "Volume": "7757970", "SymbolKey": "RELIANCE"},
+  {"Close": "3016.3", "Timestamp": "2025-10-20T18:27:41.362660", "Low": "2978.5", "High": "3023", "Open": "2985.5", "TradedDate": "2025-10-19", "Volume": "3117552", "SymbolKey": "TCS"},
+  {"Close": "3015.2", "Timestamp": "2025-10-20T18:27:40.667410", "Low": "2978.5", "High": "3023", "Open": "2985.5", "TradedDate": "2025-10-20", "Volume": "3117891", "SymbolKey": "TCS"}
+]
+

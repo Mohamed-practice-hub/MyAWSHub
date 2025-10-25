@@ -1,0 +1,10 @@
+{
+  "Variables": {
+    "DYNAMODB_TABLE": "tradebot_signals_table",
+    "TELEGRAM_BOT_TOKEN": "8200354081:AAEqciYI68Z6EePIs07GoeamBMsoZqmythQ",
+    "TELEGRAM_CHAT_ID": "6022776555",
+    "SES_FROM": "mhussain.myindia@gmail.com",
+    "SES_TO": "mhussain.myindia@gmail.com",
+    "ANALYSIS_PAYLOAD_JSON": "{\"backfilldays\":3,\"symbols\":[\"RELIANCE\",\"TCS\",\"INFY\",\"HDFCBANK\",\"ICICIBANK\",\"SBIN\",\"KOTAKBANK\",\"LT\",\"MARUTI\",\"TATAMOTORS\",\"HINDUNILVR\",\"ITC\",\"BHARTIARTL\",\"ADANIENT\",\"AXISBANK\"],\"override\":false}"
+  }
+}

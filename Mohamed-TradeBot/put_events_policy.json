@@ -1,0 +1,1 @@
+{"Version":"2012-10-17","Statement":[{"Sid":"AllowPutEvents","Effect":"Allow","Action":"events:PutEvents","Resource":["arn:aws:events:us-east-1:206055866143:event-bus/default","arn:aws:events:us-east-1:206055866143:rule/tradebot-*"]}]}

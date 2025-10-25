@@ -1,0 +1,1 @@
+{"statusCode": 200, "body": "{\"message\": \"Backfill completed\", \"symbols_processed\": 1, \"total_symbols\": 1, \"processed_symbols\": [\"RELIANCE\"], \"analysis_triggered\": true, \"error_details\": null}"}

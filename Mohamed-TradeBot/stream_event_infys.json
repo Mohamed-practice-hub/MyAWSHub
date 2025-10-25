@@ -1,0 +1,36 @@
+{
+  "Records": [
+    {
+      "eventID": "1",
+      "eventName": "INSERT",
+      "dynamodb": {
+        "NewImage": {
+          "Close": {"N": "1462.7"},
+          "Timestamp": {"S": "2025-10-20T18:27:43.198747"},
+          "Low": {"N": "1450"},
+          "High": {"N": "1467"},
+          "Open": {"N": "1453.7"},
+          "TradedDate": {"S": "2025-10-19"},
+          "Volume": {"N": "6937393"},
+          "SymbolKey": {"S": "INFY"}
+        }
+      }
+    },
+    {
+      "eventID": "2",
+      "eventName": "INSERT",
+      "dynamodb": {
+        "NewImage": {
+          "Close": {"N": "1460.9"},
+          "Timestamp": {"S": "2025-10-20T18:27:42.537645"},
+          "Low": {"N": "1450"},
+          "High": {"N": "1467"},
+          "Open": {"N": "1453.7"},
+          "TradedDate": {"S": "2025-10-20"},
+          "Volume": {"N": "6938070"},
+          "SymbolKey": {"S": "INFY"}
+        }
+      }
+    }
+  ]
+}

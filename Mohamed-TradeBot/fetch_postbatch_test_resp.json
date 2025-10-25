@@ -1,0 +1,1 @@
+{"statusCode": 200, "body": "{\"message\": \"Backfill completed\", \"symbols_processed\": 3, \"processed_symbols\": [\"RELIANCE\", \"TCS\", \"INFY\"], \"analysis_triggered\": true}"}

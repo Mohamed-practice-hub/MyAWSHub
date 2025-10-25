@@ -1,0 +1,1 @@
+{"statusCode": 500, "body": "{\"message\": \"Backfill failed\", \"symbols_processed\": 0, \"processed_symbols\": [], \"analysis_triggered\": false}"}
